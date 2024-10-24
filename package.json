@@ -1,0 +1,39 @@
+{
+  "dependencies": {
+    "@root/greenlock": "^4.0.5",
+    "chalk": "^5.3.0",
+    "express": "^4.19.2",
+    "typescript": "^5.5.4",
+    "ws": "^8.18.0",
+    "punycode": "^2.3.1",
+  },
+  "name": "ws-express-auto-https-cert-nodejs-template",
+  "version": "1.0.0",
+  "description": "A websocket and express router template with automatic cert genaration and renewal.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node dist/testCert.js",
+    "setup": "node dist/setup.js",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coolchickenguy/ws-express-auto-https-cert-nodejs-template.git"
+  },
+  "author": "Coolchickenguy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Coolchickenguy/ws-express-auto-https-cert-nodejs-template/issues"
+  },
+  "homepage": "https://github.com/Coolchickenguy/ws-express-auto-https-cert-nodejs-template#readme",
+  "type": "module",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/ws": "^8.5.12",
+    "acme-challenge-test": "^3.3.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.8"
+  }
+}
