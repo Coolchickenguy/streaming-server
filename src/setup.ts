@@ -5,6 +5,7 @@ import * as configTools from "./config.js";
 import { giveServer } from "./http01auth.cjs";
 import listen from "./https.js";
 import EventEmitter from "events";
+import { init } from "./server/middleware/api/common/dbv1.js";
 // @ts-expect-error
 import U from "@root/greenlock/utils.js";
 const { _validMx } = U;
@@ -51,6 +52,11 @@ async function safeAsk(
   }
 }
 await safeAsk(
+  `${chalk.red("Insecure port port (Leave blank to not)")}`,
+  "insecurePort",
+  () => {}
+);
+await safeAsk(
   `${chalk.red("Enter maintainer email")}${chalk.green.dim(
     " (Used by cert library)"
   )}`,
@@ -91,4 +97,11 @@ if (config.doCert) {
   }
   await addSite(config.subject);
 }
+const db = init();
+db.addUser("admin", "admin");
+db.setMedia("admin", "public", true, ["premissions", "abilities", "admin"]);
+db.destroy();
+console.log(
+  "Database created. The admin username is admin and password is admin. Change this as soon as possible."
+);
 console.log("Done!");

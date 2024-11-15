@@ -1,7 +1,8 @@
 import { resolve } from "path";
 import { fileURLToPath } from "url";
 import { existsSync, writeFileSync, readFileSync } from "fs";
-const configPath = resolve(fileURLToPath(import.meta.url), "../../config.json");
+export const root = resolve(resolve(fileURLToPath(import.meta.url), "../../"));
+const configPath = resolve(root,"config.json");
 let config: { [key in string]?: any };
 if (!existsSync(configPath)) {
   config = {};

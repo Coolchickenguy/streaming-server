@@ -1,0 +1,44 @@
+.info {
+  margin-left: 5vw;
+  margin-right: 5vw;
+  display: grid;
+  justify-content: start;
+}
+.icon {
+  border: 3px solid black;
+  width: 8vw;
+  height: 8vw;
+  grid-column: 1/1;
+  margin-right: 5vw;
+}
+.icon:hover {
+  opacity: 0.5;
+}
+.username {
+  font-family: "comforta";
+  font-size: 3.5vw;
+  grid-column: 2/2;
+  margin: auto;
+}
+/*Fake links for all!*/
+.lGroup {
+  visibility: hidden;
+  align-self: flex-end;
+  margin: 2vw;
+}
+.changePassword {
+  margin: 2vw;
+}
+.logout {
+  margin: 2vw;
+}
+.actions {
+  margin-top: 2vh;
+  margin-left: 7vw;
+}
+.role {
+  grid-row: 2/2;
+  grid-column: 2/2;
+  font-family: comforta;
+  font-size: 3vh;
+}

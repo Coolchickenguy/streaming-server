@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="/css/login.css" />
+  </head>
+  <body>
+    <div class="navigation">
+      <a href="/">Home</a>
+      <a class="current" href="/account.html">Account</a>
+      <div class="searchBar" id="searchBar">
+        <img src="search.svg">
+        <input type="text" class="search" id="searchInput" />
+      </div>
+    </div>
+    <div class="container">
+      <div class="loginForm">
+        <p>Login</p>
+        <form id="form">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" />
+          <br />
+          <br />
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" />
+          <br />
+          <br />
+          <input type="submit" value="login!"/>
+        </form>
+        <p id="failReason" class="fail" style="display: none;"></p>
+        <div class="pad"></div>
+        <a href="/createAccount.html"
+          >Don't have an account? Create one here!</a
+        >
+      </div>
+    </div>
+    <script src="/js/api.js"></script>
+    <script src="/js/header.js"></script>
+    <script src="/js/login.js"></script>
+  </body>
+</html>

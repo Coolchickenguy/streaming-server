@@ -1,0 +1,36 @@
+.header {
+  margin-left: 2vw;
+}
+.brodcastButton {
+  width: 70vw;
+  align-self: center;
+  background-color: green;
+  cursor: pointer;
+  font-family: comforta;
+  font-size: 4vh;
+  padding: 3vh;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  text-decoration: none;
+}
+.brodcastButton:disabled {
+  background-color: red;
+  animation: recording-animation 2s linear infinite;
+}
+@keyframes recording-animation {
+  to {
+    background-color: white;
+    color: black;
+  }
+}
+.brodcastLink {
+    font-family: comforta;
+    color: #444444;
+    padding-left: 2vw;
+}
+.brodcastLink a {
+  text-decoration: underline;
+  cursor: pointer;
+  color: inherit;
+}

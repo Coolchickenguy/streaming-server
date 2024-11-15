@@ -1,0 +1,364 @@
+import * as lockfile from "proper-lockfile";
+import { root } from "../../../../config.js";
+import { resolve } from "path";
+import bcrypt from "bcryptjs";
+const { hashSync, compareSync } = bcrypt;
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { randomBytes, hash } from "crypto";
+let held = false;
+const dbDir = resolve(root, "assets/private/userMedia");
+export function init() {
+  if (!existsSync(dbDir)) {
+    mkdirSync(dbDir, { recursive: true });
+  }
+  if (!held) {
+    // Lock ENTIRE database
+    if (lockfile.checkSync(dbDir)) {
+      throw new Error("Database is locked");
+    }
+    lockfile.lockSync(dbDir);
+    held = true;
+  }
+  return new basicDatabase(dbDir);
+}
+// Server media is media that should ONLY be able to be modifyed by the server (server private should only be VISABLE to the server)
+type userDataType = {
+  createdAt: number;
+  media: { public: any; private: any };
+  serverMedia: { public: any; private: any; serverPrivate: any };
+  premissions: string[];
+};
+type databaseType = {
+  users: { [key in string]: { passwordHash: string; data: userDataType } };
+  tokens: {
+    [key in string]: {
+      username: string;
+      expires: number;
+      premissions: string[];
+    };
+  };
+};
+const defaultDatabase: databaseType = {
+  users: {},
+  tokens: {},
+};
+class basicDatabase {
+  databaseDir: string;
+  bcyptRounds: number;
+  databaseFilePath: string;
+  tokenLength: number;
+  _saveInterval: NodeJS.Timeout;
+  _database: databaseType;
+  constructor(
+    databaseDir: string,
+    databaseSaveInterval: number = 10,
+    bcyptRounds: number = 12,
+    // 10 days
+    tokenLength: number = 1000 * 60 * 60 * 24 * 10
+  ) {
+    this.databaseDir = databaseDir;
+    this.bcyptRounds = bcyptRounds;
+    this.databaseFilePath = resolve(this.databaseDir, "db.json");
+    if (!existsSync(this.databaseFilePath)) {
+      writeFileSync(this.databaseFilePath, JSON.stringify(defaultDatabase));
+    }
+    this._database = JSON.parse(
+      readFileSync(this.databaseFilePath).toString()
+    ) as databaseType;
+    this._saveInterval = setInterval(() => {
+      writeFileSync(this.databaseFilePath, JSON.stringify(this._database));
+    }, databaseSaveInterval);
+    this.tokenLength = tokenLength;
+  }
+  _hash(value: string): string {
+    return hashSync(value, this.bcyptRounds);
+  }
+  addUser(username: string, password: string): boolean {
+    if (username in this._database.users) {
+      return false;
+    }
+    const passwordHash = this._hash(password);
+    const data: userDataType = {
+      createdAt: Date.now(),
+      media: { public: {}, private: {} },
+      serverMedia: { public: {}, private: {}, serverPrivate: {} },
+      premissions: [],
+    };
+    this._database.users[username] = { passwordHash, data };
+    return true;
+  }
+  deleteUser(username: string): void {
+    delete this._database.users[username];
+  }
+  /**
+   * Validate a user
+   * @param username The username
+   * @param password The password
+   * @returns If the user is valid or not. 0=yes 1=user does not exsist 2=invalid password
+   */
+  validateUser(username: string, password?: string): 0 | 1 | 2 {
+    if (username in this._database.users) {
+      if (
+        typeof password === "undefined" ||
+        compareSync(password, this._database.users[username].passwordHash)
+      ) {
+        return 0;
+      } else {
+        return 2;
+      }
+    } else {
+      return 1;
+    }
+  }
+  _hashToken(token: Buffer | string): string {
+    // @ts-ignore
+    return hash("sha512", Buffer.from(token, "base64url"), "base64url");
+  }
+  createToken(
+    username: string,
+    password: string,
+    expires: number = Date.now() + this.tokenLength,
+    premissions?: string[]
+  ) {
+    const userVailidity = this.validateUser(username, password);
+    if (userVailidity === 0) {
+      let token: Buffer;
+      let tokenHash: string;
+      do {
+        token = randomBytes(64);
+        tokenHash = this._hashToken(token);
+      } while (tokenHash in this._database.tokens);
+      this._database.tokens[tokenHash] = {
+        username,
+        expires,
+        premissions:
+          premissions ?? this._database.users[username].data.premissions,
+      };
+      return token.toString("base64url");
+    } else {
+      return userVailidity;
+    }
+  }
+  deleteToken(tokenHash: string): boolean {
+    return delete this._database.tokens[tokenHash];
+  }
+  /**
+   * Validate a token
+   * @param tokenHash
+   * @returns 0 for valid. 1 for not exsisting. 2 for expired. 3 for account deleted.
+   */
+  validateToken(tokenHash: string): 0 | 1 | 2 | 3;
+  /**
+   * Validate a token
+   * @param tokenHash
+   * @returns 0 for valid. 1 for not exsisting. 2 for expired. 3 for account deleted. 4 for does not have premissions
+   */
+  validateToken(
+    tokenHash: string,
+    requiredPremissions: string[]
+  ): 0 | 1 | 2 | 3 | 4;
+  validateToken(
+    tokenHash: string,
+    requiredPremissions?: string[]
+  ): 0 | 1 | 2 | 3 | 4 {
+    if (tokenHash in this._database.tokens) {
+      const token = this._database.tokens[tokenHash];
+      // 0 means that the token never expires
+      if (token.expires === 0 || token.expires > Date.now()) {
+        if (token.username in this._database.users) {
+          if (
+            requiredPremissions &&
+            token.premissions.filter(
+              (value) => !requiredPremissions.includes(value)
+            ).length !== 0
+          ) {
+            return 4;
+          } else {
+            return 0;
+          }
+        } else {
+          return 3;
+        }
+      } else {
+        return 2;
+      }
+    } else {
+      return 1;
+    }
+  }
+  cleanUpTokens(): void {
+    for (const tokenName of Object.keys(this._database.tokens)) {
+      const tokenVailidity = this.validateToken(tokenName);
+      if (tokenVailidity !== 0) {
+        delete this._database.tokens[tokenName];
+      }
+    }
+  }
+  getMedia(
+    token: string,
+    path: string[] = [],
+    isServerMedia: boolean = false
+  ): [number, any?] {
+    const tokenHash = this._hashToken(token);
+    const tokenVailidity = this.validateToken(tokenHash);
+    if (tokenVailidity !== 0) {
+      return [tokenVailidity];
+    }
+    const media =
+      this._database.users[this._database.tokens[tokenHash].username].data[
+        isServerMedia ? "serverMedia" : "media"
+      ].private;
+    let ref = media;
+    for (const segment of path) {
+      ref = ref[segment];
+    }
+    return [tokenVailidity, ref];
+  }
+  /**
+   * Get media from a user that does not require a token
+   * @param username The username to get the media from
+   * @param path The path the media is in
+   * @param mediaType The type of the media
+   * @returns The media
+   */
+  getNoTokenMedia(
+    username: string,
+    path: string[] = [],
+    mediaType: "client" | "server" | "serverPrivate" = "client"
+  ): any {
+    const media =
+      // @ts-ignore
+      this._database.users[username].data[
+        mediaType === "client" ? "media" : "serverMedia"
+      ][mediaType === "serverPrivate" ? "serverPrivate" : "public"];
+    let ref = media;
+    for (const segment of path) {
+      if (typeof ref === "undefined") {
+        return undefined;
+      }
+      ref = ref[segment];
+    }
+    return ref;
+  }
+  setServerMedia(
+    username: string,
+    newValue: any,
+    path: string[] = [],
+    type: keyof userDataType["serverMedia"]
+  ): void {
+    const media = this._database.users[username].data.serverMedia;
+    path.unshift(type);
+    const lastSegment = path.pop() as string;
+    let ref = media;
+    for (const segment of path) {
+      // @ts-ignore
+      ref = ref[segment];
+    }
+    // @ts-ignore
+    ref[lastSegment] = newValue;
+  }
+  setMedia(
+    token: string,
+    newValue: any,
+    path: string[] = [],
+    type: keyof userDataType["media"]
+  ) {
+    const tokenHash = this._hashToken(token);
+    const tokenVailidity = this.validateToken(tokenHash);
+    if (tokenVailidity === 0) {
+      const media =
+        this._database.users[this._database.tokens[tokenHash].username].data
+          .media;
+      path.unshift(type);
+      const lastSegment = path.pop() as string;
+      let ref = media;
+      for (const segment of path) {
+        // @ts-ignore
+        ref = ref[segment];
+      }
+      // @ts-ignore
+      ref[lastSegment] = newValue;
+    }
+    return tokenVailidity;
+  }
+  getPremissions(
+    tokenHash: string,
+    usernameOrToken: "token"
+  ): Exclude<ReturnType<typeof this.validateToken>, 0> | string[];
+  getPremissions(
+    username: string,
+    usernameOrToken: "username"
+  ): Exclude<ReturnType<typeof this.validateUser>, 0> | string[];
+  getPremissions(
+    tokenHash: string,
+    usernameOrToken: "username" | "token" = "username"
+  ):
+    | Exclude<ReturnType<typeof this.validateToken>, 0>
+    | Exclude<ReturnType<typeof this.validateUser>, 0>
+    | string[] {
+    if (usernameOrToken === "token") {
+      const tokenVailidity = this.validateToken(tokenHash);
+      if (tokenVailidity === 0) {
+        const { username } = this._database.tokens[tokenHash];
+        return this._database.users[username].data.premissions;
+      } else {
+        return tokenVailidity;
+      }
+    } else {
+      const userVailidity = this.validateUser(tokenHash);
+      if (userVailidity === 0) {
+        return this._database.users[tokenHash].data.premissions;
+      } else {
+        return userVailidity;
+      }
+    }
+  }
+  setPremissions(username: string, premissions: string[]): boolean {
+    const userVailidity = this.validateUser(username);
+    if (userVailidity === 0) {
+      this._database.users[username].data.premissions = premissions;
+      return true;
+    } else {
+      return false;
+    }
+  }
+  addPremissions(username: string, premissions: string[]): boolean {
+    const userVailidity = this.validateUser(username);
+    if (userVailidity === 0) {
+      this._database.users[username].data.premissions.push(...premissions);
+      this._database.users[username].data.premissions = [
+        ...new Set(this._database.users[username].data.premissions),
+      ];
+      return true;
+    } else {
+      return false;
+    }
+  }
+  removePremissions(username: string, premissions: string[]): boolean {
+    const userVailidity = this.validateUser(username);
+    if (userVailidity === 0) {
+      const userdata = this._database.users[username].data;
+      userdata.premissions = userdata.premissions.filter(
+        (value) => !(value in premissions)
+      );
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /**
+   * Destroy the class. Clears the save interval and deletes all propertys, also unlocks the database.
+   */
+  destroy() {
+    console.log("---- DESTROYING DATABASE ----");
+    clearInterval(this._saveInterval);
+    for (const attribute in Object.keys(
+      Object.getOwnPropertyDescriptors(this)
+    )) {
+      // @ts-ignore
+      delete this[attribute];
+    }
+    lockfile.unlockSync(dbDir);
+    held = false;
+  }
+}

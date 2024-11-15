@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="/css/stream.css" />
+  </head>
+  <body>
+    <div class="profile">
+      <img class="profileImage" id="profileImage" />
+      <p class="username" id="username"></p>
+    </div>
+    <media-controller class="video">
+      <hls-video id="output" slot="media"></hls-video>
+      <media-loading-indicator
+        loadingdelay="500"
+        slot="centered-chrome"
+        noautohide
+      ></media-loading-indicator>
+      <media-rendition-menu
+        hidden
+        id="quality"
+        anchor="quality-button"
+      ></media-rendition-menu>
+      <media-control-bar>
+        <media-play-button></media-play-button>
+        <media-mute-button></media-mute-button>
+        <media-volume-range></media-volume-range>
+        <media-time-range></media-time-range>
+        <media-time-display showduration></media-time-display>
+        <media-rendition-menu-button
+          id="quality-button"
+          invoketarget="quality"
+        ></media-rendition-menu-button>
+        <media-fullscreen-button></media-fullscreen-button>
+      </media-control-bar>
+    </media-controller>
+    <div id="streams" class="streams">
+    </div>
+    <script src="/js/api.js"></script>
+    <script src="/vendor/media-chrome.js" type="module"></script>
+    <script src="/vendor/hls-element.js" type="module"></script>
+    <script src="/vendor/menu.js" type="module"></script>
+    <script src="/js/stream.js"></script>
+  </body>
+</html>

@@ -1,0 +1,69 @@
+@font-face {
+  font-family: "comforta";
+  src: url("/fonts/Comforta.ttf") format("truetype");
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.navigation {
+  width: 100vw;
+  height: 11vh;
+  overflow: hidden;
+  background-color: #444444;
+}
+.navigation a {
+  float: left;
+  display: block;
+  padding: 2vh 2vw;
+  text-align: center;
+  text-decoration: none;
+  font-size: 7vh;
+  height: inherit;
+  font-family: "comforta";
+  color: white;
+}
+.navigation a:hover {
+  background-color: #cacaca;
+  color: black;
+}
+.navigation .current {
+  background-color: rgb(9, 20, 124);
+  color: rgb(255, 255, 255);
+}
+.navigation .searchBar {
+  float: right;
+  display: flex;
+  align-items: center;
+  height: inherit;
+  padding: 1.2vh;
+}
+.searchBar:hover {
+  background-color: #cacaca;
+}
+.searchBar img {
+  height: 3vw;
+  width: 3vw;
+  margin: 0 auto;
+  display: block;
+}
+.search {
+  padding: 2vh 2vw;
+  border-radius: 15px;
+  border: 2px solid #444444;
+  font-size: 4vh;
+  margin: 0 auto;
+  display: block;
+  width: 20vw;
+}
+.link {
+  text-decoration: underline;
+  font-family: comforta;
+  color: #444444;
+  cursor: pointer;
+}

@@ -1,0 +1,54 @@
+.header {
+    font-family: comforta;
+    font-size: 5vw;
+    margin-bottom: 4vh;
+    margin-top: 4vh;
+}
+.accountsManager {
+    margin-left: 5vw;
+}
+.account {
+    margin-bottom: 2vh;
+    margin-top: 2vh;
+    display: grid;
+    justify-content: start;
+}
+.profileImage {
+    width: 4vw;
+    height: 4vw;
+    grid-column: 1/1;
+    margin-right: 2vw;
+}
+.username {
+    font-family: comforta;
+    font-size: 2vw;
+    grid-column: 2/2;
+    margin: auto;
+}
+.userType {
+    grid-column: 2/2;
+    grid-row: 2/2;
+    font-family: comforta;
+    margin: 0;
+    font-size: 1vw;
+}
+.createdAt {
+    grid-column: 3/3;
+    grid-row: 2/2;
+    font-family: comforta;
+    margin: 0;
+    margin-left: 1vw;
+}
+.actions {
+    grid-column: 3/3;
+    display: grid;
+    margin-left: 4vw;
+}
+.actions p {
+    margin-right: 2vw;
+    grid-row: 1/1;
+    text-decoration: underline;
+    font-family: comforta;
+    color: #444444;
+    cursor: pointer;
+}

@@ -54,8 +54,14 @@ export function removeSite(subject: string): Promise<void> {
   return inst.remove({ subject });
 }
 export function getCerts(subject: string): { key: Buffer; cert: Buffer } {
-  const { configDir } = JSON.parse(readFileSync("./.greenlockrc").toString());
-  let certDir = resolve(configDir, "live", subject);
+  const greenlockrcFile = resolve(root, ".greenlockrc");
+  let certDir: string;
+  if (existsSync(greenlockrcFile)) {
+    const { configDir } = JSON.parse(readFileSync(greenlockrcFile).toString());
+    certDir = resolve(configDir, "live", subject);
+  } else {
+    certDir = resolve(root, "assets/defaultCerts");
+  }
   const certPaths = () => {
     return {
       cert: resolve(certDir, "fullchain.pem"),
@@ -68,9 +74,6 @@ export function getCerts(subject: string): { key: Buffer; cert: Buffer } {
         key,
         readFileSync(value),
       ])
-    ) as { key: Buffer; cert: Buffer; };
-  if (Object.values(certPaths()).map(existsSync).includes(false)) {
-    certDir = "./assets/defaultCerts";
-  }
+    ) as { key: Buffer; cert: Buffer };
   return certValues();
 }

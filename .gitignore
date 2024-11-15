@@ -137,3 +137,5 @@ config.json
 # Greenlock files
 greenlock.d/
 .greenlockrc
+# Database files
+assets/private/userMedia/*

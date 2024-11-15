@@ -2,17 +2,24 @@
 <html>
   <head>
     <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="/css/brodcast.css" />
   </head>
   <body>
     <div class="navigation">
       <a class="current" href="/">Home</a>
       <a href="/account.html">Account</a>
       <div class="searchBar" id="searchBar">
-        <img src="search.svg">
+        <img src="search.svg" />
         <input type="text" class="search" id="searchInput" />
       </div>
     </div>
-    <h1>A very good brodcasting service</h1>
+    <h1 class="header">Brodcast here!</h1>
+    <button class="brodcastButton" id="brodcastButton">
+      Brodcast from the browser
+    </button>
+    <script src="/js/api.js"></script>
+    <script src="/js/session.js"></script>
     <script src="/js/header.js"></script>
+    <script src="/js/brodcast.js"></script>
   </body>
 </html>
