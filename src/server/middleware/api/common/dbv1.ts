@@ -83,9 +83,7 @@ class basicDatabase {
     return true;
   }
   deleteUser(username: string): void {
-    console.log("Delete");
-    console.trace("COME ON");
-    // delete this._database.users[username];
+    delete this._database.users[username];
   }
   changePassword(username: string, newPassword: string): void {
     this._database.users[username].passwordHash = this._hash(newPassword);

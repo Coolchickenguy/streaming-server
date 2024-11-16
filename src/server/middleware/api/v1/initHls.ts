@@ -171,7 +171,6 @@ export async function initHls(
   ffmpegInst.inputFormat(videoFormat);
   return await new Promise(function host(resolve) {
     function onEnd() {
-      console.log("End");
       const old = database.getMedia(username, "public", ["streams"]);
       if (old[streamIndex - 1]) {
         old[streamIndex - 1].active = false;

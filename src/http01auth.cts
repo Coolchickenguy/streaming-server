@@ -1,6 +1,5 @@
 "use strict";
 
-//var request;
 import path from "path";
 import http from "http";
 import { Duplex } from "stream";
