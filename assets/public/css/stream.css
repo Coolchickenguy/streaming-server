@@ -21,17 +21,17 @@ body {
 }
 .username {
   font-family: comforta;
-  font-size: 15vh;
+  font-size: 31.875vw;
 }
 .video {
   width: 80vw;
   height: 80vh;
 }
 .streams {
-    margin-top: 5vh;
-    display: grid;
+  margin-top: 5vh;
+  display: grid;
 }
-.streams a{
-    margin: 1vh;
-    grid-column: 1/1;
+.streams a {
+  margin: 1vh;
+  grid-column: 1/1;
 }

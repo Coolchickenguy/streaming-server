@@ -1,52 +1,51 @@
-
 .container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
 }
 .container .loginForm {
-    border-radius: 40px;
-    width: 45vh;
-    height: 60vh;
-    margin: 30px;
-    background-color: #444444;
-    text-align: center;
-    color: white;
-    font-family: "comforta";
+  border-radius: 40px;
+  width: 45vh;
+  height: 60vh;
+  margin: 30px;
+  background-color: #444444;
+  text-align: center;
+  color: white;
+  font-family: "comforta";
 
-    flex-direction: column;
-    display: flex;
+  flex-direction: column;
+  display: flex;
 }
 .container .loginForm .pad {
-    flex:0.90;
-    display: none;
+  flex: 0.9;
+  display: none;
 }
-.container .loginForm p{
-    font-size: 6vh;
+.container .loginForm p {
+  font-size: 12.75vw;
 }
-.container .loginForm form input{
-    font-size: 2vh;
-    margin: 1vh;
-    width: 90%;
-    height: 4vh;
+.container .loginForm form input {
+  font-size: 4.25vw;
+  margin: 1vh;
+  width: 90%;
+  height: 4vh;
 }
 .container .loginForm a {
-    align-self: flex-end;
-    color: white;
-    font-size: 3vh;
+  align-self: flex-end;
+  color: white;
+  font-size: 6.375vw;
 }
-.container .loginForm a:hover{
-    color: blue;
+.container .loginForm a:hover {
+  color: blue;
 }
 .fail {
-    color: red;
-    font-size: 2vh !important;
-    margin: 0;
+  color: red;
+  font-size: 4.25vw !important;
+  margin: 0;
 }
-.fail[style*='display: none'] ~ .pad{
-    display: flex;
+.fail[style*="display: none"] ~ .pad {
+  display: flex;
 }
 br {
-    line-height: 1vh;
+  line-height: 1vh;
 }
