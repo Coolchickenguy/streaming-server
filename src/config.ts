@@ -2,7 +2,7 @@ import { resolve } from "path";
 import { fileURLToPath } from "url";
 import { existsSync, writeFileSync, readFileSync } from "fs";
 export const root = resolve(resolve(fileURLToPath(import.meta.url), "../../"));
-const configPath = resolve(root,"config.json");
+const configPath = resolve(root, "config.json");
 let config: { [key in string]?: any };
 if (!existsSync(configPath)) {
   config = {};
@@ -15,5 +15,5 @@ export function getConfig(): { [key in string]?: any } {
 }
 export function setConfig(newConfig: { [key in string]?: any }): void {
   config = newConfig;
-  writeFileSync(configPath,JSON.stringify(config));
+  writeFileSync(configPath, JSON.stringify(config));
 }

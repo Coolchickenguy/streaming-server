@@ -3,7 +3,7 @@ import tester from "acme-challenge-test";
 import { create, giveServer } from "./http01auth.cjs";
 import { setup, getCerts } from "./certTools.js";
 import listen from "./https.js";
-const record = ["http://miss.pelling.com","https://bock.org"];
+const record = ["http://miss.pelling.com", "https://bock.org"];
 await setup();
 const server = await listen(
   (req, res) => {
@@ -19,7 +19,7 @@ giveServer(server);
 tester
   .testRecord("http-01", record, create())
   .then(function () {
-    record.forEach(record => console.info("PASS " + record));
+    record.forEach((record) => console.info("PASS " + record));
   })
   .catch(function (e: Error) {
     console.error(e.message);

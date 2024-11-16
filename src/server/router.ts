@@ -25,7 +25,7 @@ type routes = {
   };
 };
 type routeTypesDescriptor = {
-  [key:string]: { satisfiyes?: string[] };
+  [key: string]: { satisfiyes?: string[] };
 };
 type getRouteTypes<rt> = [
   | keyof rt
@@ -185,8 +185,7 @@ router.prototype.build = function (this: exsampleRouter): void {
   );
   this._routes = Object.fromEntries(
     entries.map(([key, value]) => {
-      var out: routePath =
-        {};
+      var out: routePath = {};
       value.paths.forEach((val) => {
         const parsed = this._parsePath(
           val[0].replace(/(?<=\/)\*$/, ":asterisk")
@@ -226,15 +225,17 @@ router.prototype.build = function (this: exsampleRouter): void {
     })
   );
 };
-function routeGeter(
-  parsed: string[],
-  route: routePath[string]
-): route[] {
+function routeGeter(parsed: string[], route: routePath[string]): route[] {
   let output: route[][] = [];
-  for (let i = 0; i < parsed.length && route !== undefined;i++) {
+  for (let i = 0; i < parsed.length && route !== undefined; i++) {
     output.push(route.routes);
-    if(wildcard in route.children){
-      output.push(routeGeter(parsed.slice(i+1),route.children[wildcard] as routePathNormal[string]));
+    if (wildcard in route.children) {
+      output.push(
+        routeGeter(
+          parsed.slice(i + 1),
+          route.children[wildcard] as routePathNormal[string]
+        )
+      );
     }
     route = route.children[parsed[i]];
   }
@@ -258,9 +259,7 @@ router.prototype.getRoutes = function (
       if (isEmpty(route)) {
         return lastVal;
       }
-      lastVal.push(
-        ...routeGeter(parsed, {children:route,routes:[]})
-      );
+      lastVal.push(...routeGeter(parsed, { children: route, routes: [] }));
       return lastVal;
     }, [] as route[])
     .sort((a, b) => (a.precedence > b.precedence ? 1 : -1))

@@ -160,7 +160,9 @@ export function createFfmpegHlsInst({
           .join(" "),
         "-master_pl_name",
         masterPlName,
-        ...(typeof hlsListSize !== "undefined" ? ["-hls_list_size", hlsListSize.toString()] : []),
+        ...(typeof hlsListSize !== "undefined"
+          ? ["-hls_list_size", hlsListSize.toString()]
+          : []),
         ...(hlsPlaylistType ? ["-hls_playlist_type", hlsPlaylistType] : []),
         ...(hlsBaseUrl ? ["-hls_base_url", hlsBaseUrl] : [])
       )

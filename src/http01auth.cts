@@ -10,11 +10,11 @@ type server = {
   /**
    * The function passed to the tcp server to intercept requests from the default callback
    */
-  get requestIntercepter(): (socket: Socket) => void
+  get requestIntercepter(): (socket: Socket) => void;
   /**
    * Start intercepting requests
    * @param callbackFunction The callback for intercepted requests.
-   */;
+   */
   startIntercept(
     callbackFunction: (
       request: Buffer,

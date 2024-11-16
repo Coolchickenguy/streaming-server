@@ -164,7 +164,7 @@ export async function initHls(
         ? 0
         : -1,
     useVideoTrack: width >= 0 ? 0 : -1,
-    hlsListSize:0
+    hlsListSize: 0,
   };
   const ffmpegInst = createFfmpegHlsInst(config);
   ffmpegInst.addInput(videoStream);
