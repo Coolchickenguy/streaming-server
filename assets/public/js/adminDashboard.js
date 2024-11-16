@@ -13,7 +13,6 @@ if (!(localStorage.loggedIn === "true")) {
   const abilities = premissions.abilities ?? [];
   if (abilities.includes("admin")) {*/
   const infoRes = await db.getServerInfo(localStorage.token);
-  console.log(infoRes);
   if (infoRes.type === 0) {
     // It worked!
     const { accounts } = infoRes.value.info;

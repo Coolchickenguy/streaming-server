@@ -13,7 +13,6 @@
     // Show stream list
     let responce = userStreams.value.value.reverse();
     const thisStream = userStreams.value.value[id - 1];
-    console.log(JSON.stringify(thisStream))
     if (typeof thisStream === "undefined" || thisStream?.deleted === true) {
       const videoNode = document.getElementById("output").parentNode;
       const errorNode = document.createElement("p");
@@ -26,7 +25,6 @@
         }
         for (const streamIndex in responce) {
           const stream = responce[streamIndex];
-          console.log(stream);
           if (!stream?.deleted) {
             const id = responce.length - streamIndex;
             const streamDiv = document.createElement("div");
@@ -54,9 +52,8 @@
                   if (responce.type === 0) {
                     streamDiv.remove();
                   } else {
-                    /*await db.logout();
-                window.location.href = "/login.html";*/
-                    console.log(responce);
+                    await db.logout();
+                    window.location.href = "/login.html";
                   }
                 }
               );
