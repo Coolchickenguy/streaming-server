@@ -23,7 +23,7 @@ body {
   padding: 2vh 2vw;
   text-align: center;
   text-decoration: none;
-  font-size: 14.875vw;
+  font-size: 7vh;
   height: inherit;
   font-family: "comforta";
   color: white;
@@ -56,7 +56,7 @@ body {
   padding: 2vh 2vw;
   border-radius: 15px;
   border: 2px solid #444444;
-  font-size: 8.5vw;
+  font-size: 4vh;
   margin: 0 auto;
   display: block;
   width: 20vw;

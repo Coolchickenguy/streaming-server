@@ -36,12 +36,9 @@
   margin-top: 2vh;
   margin-left: 7vw;
 }
-.actions a{
-  font-size: 2vw;
-}
 .role {
   grid-row: 2/2;
   grid-column: 2/2;
   font-family: comforta;
-  font-size: 1.5vw;
+  font-size: 3vh;
 }
