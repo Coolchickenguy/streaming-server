@@ -1,4 +1,6 @@
+import _exports from "@ffmpeg-installer/ffmpeg";
 import { PassThrough, Readable, Writable } from "stream";
+import EventEmitter from "events";
 // Thanks to https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
 export function isEmpty(obj: { [key in any]: any } | {}): boolean {
   for (const prop in obj) {
@@ -176,25 +178,46 @@ export type transformTemplateToType<T extends template> =
         [key in keyof T]: transformTemplateToType<T[key]>;
       };
 
+// Tee a stream like it never happened
 export function teeStream(input: Readable, outputs: Readable[]) {
-  input.once("end", function () {
+  // Copy all events
+  function emitAll(event: string): [string, (...args: any[]) => void] {
+    return [
+      event,
+      (...data: any[]) => {
+        for (const output of outputs) {
+          output.emit(event, ...data);
+        }
+      },
+    ];
+  }
+  input.once(...emitAll("close"));
+  input.once(...emitAll("end"));
+  input.once(...emitAll("error"));
+  input.on("pause", () => {
     for (const output of outputs) {
-      output.destroy();
+      if (!output.isPaused()) {
+        output.pause();
+      }
+    }
+  });
+  input.on("resume", () => {
+    for (const output of outputs) {
+      if (output.isPaused()) {
+        output.pause();
+      }
     }
   });
   for (const output of outputs) {
-    output.once("end", function () {
+    function onEnd() {
       outputs = outputs.filter((stream) => stream !== output);
-    });
+    }
+    output.once("close", onEnd);
+    output.once("end", onEnd);
   }
   input.on("data", function (data) {
     for (const output of outputs) {
       output.push(data);
-    }
-  });
-  input.once("end", function () {
-    for (const output of outputs) {
-      output.destroy();
     }
   });
 }
@@ -205,3 +228,13 @@ export function closestNumber(findClosest: number, inArray: number[]): number {
       : test;
   });
 }
+export const events = new EventEmitter();
+function onExit() {
+  events.emit("exit");
+  process.exit(0);
+}
+process.on("exit", onExit);
+process.on("SIGINT", onExit);
+process.on("SIGUSR1", onExit);
+process.on("SIGUSR2", onExit);
+process.on("uncaughtException", onExit);

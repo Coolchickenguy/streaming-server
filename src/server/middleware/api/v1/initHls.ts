@@ -6,7 +6,7 @@ import { mkdirSync, rmSync } from "fs";
 import { Readable } from "stream";
 import { spawn } from "child_process";
 import { resolve } from "path";
-import { teeStream, closestNumber } from "../../../utils.js";
+import { teeStream, closestNumber, events } from "../../../utils.js";
 import { symlinkSync, existsSync, unlinkSync } from "fs";
 import { error400 } from "./index.js";
 type db = ReturnType<typeof init>;
@@ -164,6 +164,7 @@ export async function initHls(
         ? 0
         : -1,
     useVideoTrack: width >= 0 ? 0 : -1,
+    hlsListSize:0
   };
   const ffmpegInst = createFfmpegHlsInst(config);
   ffmpegInst.addInput(videoStream);
@@ -177,6 +178,7 @@ export async function initHls(
         database.setMedia(username, "public", old, ["streams"]);
       }
       resolve();
+      events.removeListener("exit", onEnd);
     }
     ffmpegInst.on("error", function (error, stdout, stderr) {
       resolve({
@@ -186,9 +188,10 @@ export async function initHls(
       });
       onEnd();
     });
-    videoStream;
     videoStream.once("end", onEnd);
-    process.once("beforeExit", onEnd);
+    videoStream.once("close", onEnd);
+    // Prepend so it will be run before the db is destroyed
+    events.prependListener("exit", onEnd);
     ffmpegInst.run();
   });
 }

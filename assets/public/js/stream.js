@@ -11,28 +11,48 @@
       `/account/getProfileImage?user=${encodeURIComponent(username)}`;
     usernameP.textContent = username;
     // Show stream list
-    const responce = userStreams.value.value.reverse();
-    for (const streamIndex in responce) {
-      const stream = responce[streamIndex];
-      const streamA = document.createElement("a");
-      streamA.className = "link";
-      streamA.href = `/stream/${username}/${responce.length - streamIndex}`;
-      streamA.textContent = `${new Date(stream.startDate)}${
-        stream.active ? " (Active)" : ""
-      }`;
-      streamsElm.appendChild(streamA);
+    let responce = userStreams.value.value.reverse();
+    function refreshList(responce) {
+      while (streamsElm.firstChild) {
+        streamsElm.firstChild.remove();
+      }
+      for (const streamIndex in responce) {
+        const stream = responce[streamIndex];
+        const streamA = document.createElement("a");
+        streamA.className = "link";
+        streamA.href = `/stream/${username}/${responce.length - streamIndex}`;
+        streamA.textContent = `${new Date(stream.startDate)}${
+          stream.active ? " (Active)" : ""
+        }`;
+        streamsElm.appendChild(streamA);
+      }
     }
+    refreshList(responce);
+    // (await db.getPublicMedia(username, ["streams"])).value.value.reverse()
     const output = document.getElementById("output");
-    /* if (responce[0].active || id) {
-      // Show stream
-      const manifestUrl = `${apiV1RestBase}/stream/${username}/${
-        id || "latest"
-      }/masterPl.m3u8`;
-      output.src = manifestUrl;
-    } else {*/
-    let active = responce[0].active;
+    let active = responce[responce.length - 1].active === true;
     let last;
     const video = output.parentNode;
+    let patched = false;
+    function patch() {
+      if (!patched) {
+        // Monkey-patch error function
+        const oldError = output.api.config.errorController.prototype.onError;
+        output.api.config.errorController.prototype.onError = function (
+          type,
+          reason
+        ) {
+          if (type === "hlsError" && reason.type === "networkError") {
+            setTimeout(() => {
+              console.log("Reloading video");
+              output.load();
+            }, 2000);
+          }
+          return oldError.call(this, type, reason);
+        };
+        patched = true;
+      }
+    }
     const screenSaver = document.createElement("div");
     const holder = video.parentNode;
     screenSaver.textContent = "Not brodcasting";
@@ -46,24 +66,42 @@
       ).json();
       if (active !== last) {
         if (active) {
+          responce = (
+            await db.getPublicMedia(username, ["streams"])
+          ).value.value.reverse();
           // Show stream
           const manifestUrl = `${apiV1RestBase}/stream/${username}/${
             id || responce.length
           }/masterPl.m3u8`;
           output.src = manifestUrl;
+          patch();
           if (Array.from(holder.children).includes(screenSaver)) {
-            console.log("replace");
-            holder.replaceChild(screenSaver, video);
+            holder.replaceChild(video, screenSaver);
+            refreshList(responce);
           }
         } else {
-          holder.replaceChild(video, screenSaver);
+          output.src = "";
+          holder.replaceChild(screenSaver, video);
+          responce = (
+            await db.getPublicMedia(username, ["streams"])
+          ).value.value.reverse();
+          refreshList(responce);
         }
       }
       last = active;
     }
-    setInterval(init, 5000);
-    await init();
-    //}
+    if (id) {
+      // Show stream
+      const manifestUrl = `${apiV1RestBase}/stream/${username}/${
+        id || responce.length
+      }/masterPl.m3u8`;
+      output.src = manifestUrl;
+      patch();
+      setInterval(() => refreshList(responce), 30000);
+    } else {
+      setInterval(() => init().catch(console.log.bind(console)), 5000);
+      await init().catch(console.log.bind(console));
+    }
   } else {
     document.write("Invalid user");
   }

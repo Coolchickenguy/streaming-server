@@ -16,3 +16,6 @@ export default async function configure(
   apiv1(app, ws);
   add404(app, ws);
 }
+process.on("uncaughtException", function (e) {
+  console.log(e.stack, e.message);
+});

@@ -8,13 +8,18 @@ if (!(localStorage.loggedIn === "true")) {
   if (premissionsResponce.type === 0) {
     const premissions = premissionsResponce.value?.value ?? {};
     const canBrodcast = premissions?.abilities?.brodcast === true;
+    const source = document.getElementById("source");
     if (canBrodcast) {
       // Init page
       const brodcastButton = document.getElementById("brodcastButton");
       brodcastButton.addEventListener("click", async function brodcast() {
         brodcastButton.disabled = true;
         const onChunk = db.publishStream(localStorage.token, "webm");
-        await getUserMedia(onChunk);
+        if (source.value === "camera") {
+          await getUserMedia(onChunk);
+        } else {
+          await getDisplayMedia(onChunk);
+        }
         const linkHolder = document.createElement("p");
         linkHolder.className = "brodcastLink";
         const link = document.createElement("a");

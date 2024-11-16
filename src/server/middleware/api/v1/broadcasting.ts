@@ -73,10 +73,10 @@ export function addBrodcasting(
     const { username } = req.body;
     if (database.validateUser(username) === 0) {
       const streams = database.getMedia(username, "public", ["streams"]);
-      if (streams[streams.length]?.active) {
-        res.status(200).send(false);
-      } else {
+      if (streams[streams.length - 1]?.active === true) {
         res.status(200).send(true);
+      } else {
+        res.status(200).send(false);
       }
     } else {
       res.status(200).send(false);
@@ -90,4 +90,7 @@ export function addBrodcasting(
       },
     })
   );
+  Router.use("/stream", (req, res) => {
+    res.status(404).send("404");
+  });
 }

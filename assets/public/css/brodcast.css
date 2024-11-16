@@ -25,12 +25,23 @@
   }
 }
 .brodcastLink {
-    font-family: comforta;
-    color: #444444;
-    padding-left: 2vw;
+  font-family: comforta;
+  color: #444444;
+  padding-left: 2vw;
 }
 .brodcastLink a {
   text-decoration: underline;
   cursor: pointer;
   color: inherit;
+}
+.source {
+  width: 30vw;
+  align-self: center;
+  margin-bottom: 4vh;
+  border-radius: 4px;
+  height: 8vh;
+  border-color: #444444;
+  background-color: white;
+  font-family: comforta;
+  font-size: 3vw;
 }

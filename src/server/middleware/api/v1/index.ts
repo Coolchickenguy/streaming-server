@@ -3,6 +3,7 @@ import { Router } from "express";
 import type { wsRouter } from "../../../wsRouter.js";
 import {
   checkTemplate,
+  events,
   template,
   transformTemplateToType,
 } from "../../../utils.js";
@@ -15,7 +16,7 @@ import admin from "./admin.js";
 import { getConfig } from "../../../../config.js";
 const config = getConfig();
 const db = init();
-process.once("beforeExit", () => db.destroy());
+events.once("exit", () => db.destroy());
 export type postFunction = express.Express["post"] extends (
   arg0: string,
   arg1: infer v
@@ -128,14 +129,14 @@ export default function apiv1(app: express.Express, ws: wsRouter): void {
     windowMs: 24 * 60 * 60 * 1000,
     limit: 4,
     handler: tooManyRequests,
-    validate: { trustProxy: !!config.insecurePort },
+    validate: { xForwardedForHeader: !config.insecurePort },
   });
   const tokenActionsRateLimit = rateLimit({
     // One request per 5 secs
     windowMs: 12 * 5 * 1000,
     limit: 12 * 1,
     handler: tooManyRequests,
-    validate: { trustProxy: !!config.insecurePort },
+    validate: { xForwardedForHeader: !config.insecurePort },
   });
   apiRouter.post("/createAccount", accountActionsRateLimit);
   apiRouter.post(

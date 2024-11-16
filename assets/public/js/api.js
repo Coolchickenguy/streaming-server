@@ -106,6 +106,7 @@ class apiV1 {
     const connection = new WebSocket(
       apiV1WebsocketBase + `/publishStream/${token}.${format}`
     );
+    window.connection = connection;
     connection.onclose = ({ reason, code }) => {
       if (code !== 1000) {
         console.log(reason, code);
