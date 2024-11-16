@@ -23,10 +23,10 @@
     display: none;
 }
 .container .loginForm p{
-    font-size: 6vh;
+    font-size: 2.824vw;
 }
 .container .loginForm form input{
-    font-size: 2vh;
+    font-size: 0.941vw;
     margin: 1vh;
     width: 90%;
     height: 4vh;
@@ -34,14 +34,14 @@
 .container .loginForm a {
     align-self: flex-end;
     color: white;
-    font-size: 3vh;
+    font-size: 1.412vw;
 }
 .container .loginForm a:hover{
     color: blue;
 }
 .fail {
     color: red;
-    font-size: 2vh !important;
+    font-size: 0.941vw !important;
     margin: 0;
 }
 .fail[style*='display: none'] ~ .pad{
