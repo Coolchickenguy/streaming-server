@@ -31,7 +31,12 @@ body {
   margin-top: 5vh;
   display: grid;
 }
-.streams a {
+.streams div {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.streams div a {
   margin: 1vh;
   grid-column: 1/1;
 }

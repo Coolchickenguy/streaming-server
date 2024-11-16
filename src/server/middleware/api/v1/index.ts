@@ -115,6 +115,7 @@ errorCause:token
 errorCause:data
   1: Data too large
   2: Invalid data
+  3: Referenced data does not exsist
 */
 export default function apiv1(app: express.Express, ws: wsRouter): void {
   const apiRouter = Router();

@@ -117,6 +117,21 @@ class apiV1 {
       connection.send(chunk);
     };
   }
+  deleteBrodcast(token, id) {
+    return makeApiPostRequest(apiV1RestBase + "/brodcast/delete", {
+      token,
+      id,
+    });
+  }
+  async isBrodcastActive(username) {
+    return await (
+      await fetch(apiV1RestBase + "/brodcast/active", {
+        method: "post",
+        body: JSON.stringify({ username }),
+        headers: { "Content-Type": "application/json" },
+      })
+    ).json();
+  }
   // Admins are the best!
   getServerInfo(token) {
     return makeApiPostRequest(apiV1RestBase + "/admin/severInfo", {

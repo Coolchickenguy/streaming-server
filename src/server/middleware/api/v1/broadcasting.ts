@@ -2,12 +2,13 @@ import type * as express from "express";
 import { static as static_ } from "express";
 import type { init } from "../common/dbv1.js";
 import { wsRouter, callbackFunction } from "../../../wsRouter.js";
-import { noopClass, wrapForNoop } from "./index.js";
+import { check, error400, noopClass, ok200, wrapForNoop } from "./index.js";
 import { getConfig, root } from "../../../../config.js";
 import { Readable } from "stream";
 import { initHls } from "./initHls.js";
 import { randomUUID } from "crypto";
 import { resolve } from "path";
+import { rmSync } from "fs";
 const config = getConfig();
 if (!("subject" in config)) {
   throw new Error("Not configured for website");
@@ -67,6 +68,53 @@ export function addBrodcasting(
         socket.close(1011, `Ffmpeg encountered error (trace ${traceUuid})`);
       }
     } as callbackFunction)
+  );
+  Router.post(
+    "/brodcast/delete",
+    wrapForNoop(function (req, res) {
+      const body = req.body;
+      check({ token: "string", id: "number" }, body, req, res);
+      const tokenHash = database._hashToken(body.token);
+      const tokenVailidity = database.validateToken(tokenHash);
+      if (tokenVailidity === 0) {
+        const { username } = database._database.tokens[tokenHash];
+        const id = (body.id-1).toString();
+        const brodcast = database.getMedia(username, "public", [
+          "streams",
+          id,
+        ]);
+        if (typeof brodcast === "undefined" || brodcast.deleted) {
+          error400([`Data does not exsist`], req, res, {
+            errorCause: "data",
+            errorReason: 3,
+          });
+        } else {
+          rmSync(
+            resolve(
+              root,
+              "assets",
+              "private",
+              "userMedia",
+              "streams",
+              username,
+              id
+            ),
+            { recursive: true }
+          );
+          brodcast.deleted = true;
+          database.setMedia(username, "public", brodcast, [
+            "streams",
+            id,
+          ]);
+          ok200(["Deleted successfully"], req, res);
+        }
+      } else {
+        error400([`Token code ${tokenVailidity}`], req, res, {
+          errorCause: "token",
+          errorReason: tokenVailidity,
+        });
+      }
+    })
   );
   Router.post("/brodcast/active", function (req, res) {
     // Unlike most endpoints as it never can send a 400

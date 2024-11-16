@@ -117,8 +117,9 @@ export async function initHls(
   const oldStreams: {
     startDate: number;
     active: boolean;
+    deleted: boolean;
   }[] = database.getMedia(username, "public", ["streams"]) ?? [];
-  oldStreams.push({ startDate, active: true });
+  oldStreams.push({ startDate, active: true, deleted: false });
   database.setMedia(username, "public", oldStreams, ["streams"]);
   const streamIndex = oldStreams.length;
   const streamDir = resolve(
