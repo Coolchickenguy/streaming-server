@@ -7,8 +7,6 @@ import { Readable } from "stream";
 import { spawn } from "child_process";
 import { resolve } from "path";
 import { teeStream, closestNumber, events } from "../../../utils.js";
-import { symlinkSync, existsSync, unlinkSync } from "fs";
-import { error400 } from "./index.js";
 type db = ReturnType<typeof init>;
 const { resolutionsAndBitrates: ___resolutionsAndBitrates } = getConfig();
 const resolutionsAndBitrates: [number, string, string][] = Array.isArray(
@@ -132,11 +130,6 @@ export async function initHls(
     streamIndex.toString()
   );
   mkdirSync(streamDir, { recursive: true });
-  const latestDir = resolve(streamDir, "../latest");
-  if (existsSync(latestDir)) {
-    unlinkSync(latestDir);
-  }
-  symlinkSync(streamDir, latestDir);
   const newHeight = closestNumber(
     height,
     resolutionsAndBitrates.map(([resolution]) => resolution)
