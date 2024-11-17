@@ -83,10 +83,10 @@
     async function init() {
       active = await db.isBrodcastActive(username);
       if (active !== last) {
+        responce = (
+          await db.getPublicMedia(username, ["streams"])
+        ).value.value.reverse();
         if (active) {
-          responce = (
-            await db.getPublicMedia(username, ["streams"])
-          ).value.value.reverse();
           // Show stream
           const manifestUrl = `${apiV1RestBase}/stream/${username}/${
             id || responce.length
@@ -100,14 +100,17 @@
         } else {
           output.src = "";
           holder.replaceChild(screenSaver, video);
-          responce = (
-            await db.getPublicMedia(username, ["streams"])
-          ).value.value.reverse();
           refreshList(responce);
         }
       }
       last = active;
     }
+    setInterval(async () => {
+      responce = (
+        await db.getPublicMedia(username, ["streams"])
+      ).value.value.reverse();
+      refreshList(responce);
+    }, 30000);
     if (id) {
       if (typeof thisStream === "undefined" || thisStream?.deleted === true) {
         const videoNode = document.getElementById("output").parentNode;
@@ -122,7 +125,6 @@
         output.src = manifestUrl;
         patch();
       }
-      setInterval(() => refreshList(responce), 30000);
     } else {
       setInterval(() => init().catch(console.log.bind(console)), 5000);
       await init().catch(console.log.bind(console));
