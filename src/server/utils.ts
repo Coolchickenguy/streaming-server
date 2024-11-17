@@ -1,6 +1,8 @@
 import _exports from "@ffmpeg-installer/ffmpeg";
 import { PassThrough, Readable, Writable } from "stream";
 import EventEmitter from "events";
+import { readdirSync, realpathSync, statSync } from "fs";
+import { join } from "path";
 // Thanks to https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
 export function isEmpty(obj: { [key in any]: any } | {}): boolean {
   for (const prop in obj) {
@@ -238,3 +240,18 @@ process.on("SIGINT", onExit);
 process.on("SIGUSR1", onExit);
 process.on("SIGUSR2", onExit);
 process.on("uncaughtException", onExit);
+
+type output = { [key in string]: output } | number;
+export function dirSize(path: string): output {
+  function recurse(path: string): output {
+    const stat = statSync(path);
+    if (stat.isDirectory()) {
+      return Object.fromEntries(
+        readdirSync(path).map((item) => [item, recurse(join(path, item))])
+      );
+    } else {
+      return stat.size;
+    }
+  }
+  return recurse(path);
+}

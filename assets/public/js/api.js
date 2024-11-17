@@ -158,6 +158,18 @@ class apiV1 {
       user,
     });
   }
+  deleteExternalBrodcast(token, user, id) {
+    return makeApiPostRequest(apiV1RestBase + "/admin/deleteBrodcast", {
+      token,
+      user,
+      id,
+    });
+  }
+  getStorageSize(token){
+    return makeApiPostRequest(apiV1RestBase + "/admin/storageSize", {
+      token,
+    });
+  }
 }
 async function getUserMedia(onChunk) {
   const media = await navigator.mediaDevices.getUserMedia({

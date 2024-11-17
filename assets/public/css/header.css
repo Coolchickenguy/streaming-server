@@ -14,7 +14,6 @@ body {
 .navigation {
   width: 100vw;
   height: 13vh;
-  overflow: hidden;
   background-color: #444444;
   display: flex;
   flex-direction: row;

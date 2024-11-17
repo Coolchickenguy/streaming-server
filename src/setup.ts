@@ -52,9 +52,23 @@ async function safeAsk(
   }
 }
 await safeAsk(
-  `${chalk.red("Insecure port port (Leave blank to not)")}`,
+  `${chalk.red(
+    "Insecure port port (Leave blank to not disable all security and yada yada)"
+  )}`,
   "insecurePort",
   () => {}
+);
+await safeAsk(
+  `${chalk.red("Enter video storage size limit")}`,
+  "maxVideoStorage",
+  (value) =>
+    // THAT IS NOT HOW THIS FUNCTION WORKS
+    // @ts-ignore
+    isNaN(value)
+      ? (() => {
+          throw new Error("Enter a number");
+        })()
+      : undefined
 );
 await safeAsk(
   `${chalk.red("Enter maintainer email")}${chalk.green.dim(

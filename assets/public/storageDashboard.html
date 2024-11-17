@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/header.css" />
+    <link rel="stylesheet" href="/css/storageDashboard.css" />
+  </head>
+  <body>
+    <div class="navigation">
+      <a class="current" href="/">Home</a>
+      <a href="/account.html">Account</a>
+      <div class="searchBar" id="searchBar">
+        <img src="search.svg" />
+        <input type="text" class="search" id="searchInput" />
+      </div>
+    </div>
+    <div class="container">
+      <h1 class="sectionTitle">Storage use</h1>
+      <h2 class="use" id="use">??/??</h2>
+      <a class="link refresh" id="refresh">refresh</a>
+      <div class="chartHolder">
+        <a class="link back" id="back">back</a>
+        <canvas id="chart" style="width: 100%; max-width: 700px"></canvas>
+        <a class="link delete" id="delete">delete</a>
+      </div>
+    </div>
+    <script src="/js/api.js"></script>
+    <script src="/js/header.js"></script>
+    <script src="/js/session.js"></script>
+    <script src="/vendor/chart.min.js"></script>
+    <script src="/js/storageDashboard.js"></script>
+  </body>
+</html>
