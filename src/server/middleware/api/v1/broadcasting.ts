@@ -78,11 +78,8 @@ export function addBrodcasting(
       const tokenVailidity = database.validateToken(tokenHash);
       if (tokenVailidity === 0) {
         const { username } = database._database.tokens[tokenHash];
-        const id = (body.id-1).toString();
-        const brodcast = database.getMedia(username, "public", [
-          "streams",
-          id,
-        ]);
+        const id = (body.id - 1).toString();
+        const brodcast = database.getMedia(username, "public", ["streams", id]);
         if (typeof brodcast === "undefined" || brodcast.deleted) {
           error400([`Data does not exsist`], req, res, {
             errorCause: "data",
@@ -97,15 +94,12 @@ export function addBrodcasting(
               "userMedia",
               "streams",
               username,
-              id
+              body.id.toString()
             ),
             { recursive: true }
           );
           brodcast.deleted = true;
-          database.setMedia(username, "public", brodcast, [
-            "streams",
-            id,
-          ]);
+          database.setMedia(username, "public", brodcast, ["streams", id]);
           ok200(["Deleted successfully"], req, res);
         }
       } else {
