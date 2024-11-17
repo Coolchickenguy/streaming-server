@@ -102,10 +102,8 @@ if (!(localStorage.loggedIn === "true")) {
     };
   }
   let path = [];
-  await refreshStorage();
   const chart = new Chart("chart", {
     type: "doughnut",
-    data: getData(),
     options: {
       onClick: function (_event, elements) {
         if (elements.length > 0) {
@@ -124,11 +122,23 @@ if (!(localStorage.loggedIn === "true")) {
     },
   });
   const use = document.getElementById("use");
-  let total = 0;
-  all(storage.storageUse, (value) => (total += value));
-  use.textContent = `${bestStorage(total)}/${bestStorage(storage.maxStorage)}`;
-  if (total > storage.maxStorage) {
-    use.style.color = "red";
+  async function updatePage() {
+    await refreshStorage();
+    let total = 0;
+    all(storage.storageUse, (value) => (total += value));
+    use.textContent = `${bestStorage(total)}/${bestStorage(
+      storage.maxStorage
+    )}`;
+    if (total > storage.maxStorage) {
+      use.style.color = "red";
+    } else {
+      use.style.color = "black";
+    }
+    while (Object.keys(get(storage.storageUse, path) ?? {}).length === 0) {
+      path.pop();
+    }
+    chart.data = getData(...path);
+    update();
   }
   const back = document.getElementById("back");
   const deleteElm = document.getElementById("delete");
@@ -160,12 +170,7 @@ if (!(localStorage.loggedIn === "true")) {
         Number(path[2])
       );
       if (responce.type === 0) {
-        await refreshStorage();
-        while (typeof get(storage.storageUse, path) === "undefined") {
-          path.pop();
-        }
-        chart.data = getData(...path);
-        update();
+        await updatePage();
       } else if (responce.type === 4) {
         window.location.href = "/account.html";
       } else {
@@ -173,12 +178,6 @@ if (!(localStorage.loggedIn === "true")) {
       }
     }
   });
-  document.getElementById("refresh").addEventListener("click", async () => {
-    await refreshStorage();
-    while (typeof get(storage.storageUse, path) === "undefined" && path.length > 0) {
-      path.pop();
-    }
-    chart.data = getData(...path);
-    update();
-  });
+  document.getElementById("refresh").addEventListener("click", updatePage);
+  await updatePage();
 })();
