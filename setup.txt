@@ -1,8 +1,0 @@
-Setup with tunneling
-Install nodejs
-Install ssh
-npm i 
-npm run build
-npm run setup  (COnfigure to your likeing)
-npm run start
-ssh -R ${DOMAIN}:80:localhost:${PORT YOU SET INSECURE TO} serveo.net
