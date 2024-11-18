@@ -1,0 +1,53 @@
+name: Publish
+on: [push]
+permissions: write-all
+jobs:
+  build:
+    name: "Publish"
+    if: ${{ contains(github.event.commits[0].message, '@publish') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get version
+        run: echo "PUBLISH_VERSION=$(echo '${{ github.event.commits[0].message }}' | grep -oP "(?<=@publish )\d+\.\d+\.\d")" >> $GITHUB_ENV
+      - name: Echo version
+        run: echo $PUBLISH_VERSION
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+      - name: Install packages
+        run: npm i
+      - name: Create build dir
+        run: mkdir ./build
+      # Windows platforms
+      # "x64" | "x86" | "arm64"
+      - name: Window x64 build
+        run: node build.js v22.11.0 win x64 $PUBLISH_VERSION > ./build/windows_x64.ps1
+      - name: Window x86 build
+        run: node build.js v22.11.0 win x86 $PUBLISH_VERSION > ./build/windows_x86.ps1
+      - name: Window arm64 build
+        run: node build.js v22.11.0 win arm64 $PUBLISH_VERSION > ./build/windows_arm64.ps1
+      # Linux platforms
+      # "x64" | "armv7l" | "arm64" | "ppc64le" | "s390x"
+      - name: Linux x64 build
+        run: node build.js v22.11.0 linux x64 $PUBLISH_VERSION > ./build/linux_x64.sh
+      - name: Linux armv7l build
+        run: node build.js v22.11.0 linux armv7l $PUBLISH_VERSION > ./build/linux_armv7l.sh
+      - name: Linux arm64 build
+        run: node build.js v22.11.0 linux arm64 $PUBLISH_VERSION > ./build/linux_arm64.sh
+      - name: Linux Power LE build
+        run: node build.js v22.11.0 linux ppc64le $PUBLISH_VERSION > ./build/linux_ppc64le.sh
+      - name: Linux System Z build
+        run: node build.js v22.11.0 linux s390x $PUBLISH_VERSION > ./build/linux_s390x.sh
+      # Darwin (Macos) platforms
+      - name: Darwin (Macos) x64 build
+        run: node build.js v22.11.0 darwin x64 $PUBLISH_VERSION > ./build/darwin_x64.sh
+      - name: Darwin (Macos) arm64 build
+        run: node build.js v22.11.0 darwin arm64 $PUBLISH_VERSION > ./build/darwin_arm64.sh
+      # Publish
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/*"
+          tag: ${{env.PUBLISH_VERSION}}
+          name: "Release ${{env.PUBLISH_VERSION}}"
