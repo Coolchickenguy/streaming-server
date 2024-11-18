@@ -18,6 +18,8 @@ jobs:
           node-version: 22.x
       - name: Install packages
         run: npm i
+      - name: Create build dir
+        run: mkdir ./build
       # Windows platforms
       # "x64" | "x86" | "arm64"
       - name: Window x64 build
