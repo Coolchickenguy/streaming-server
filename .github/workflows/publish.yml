@@ -1,0 +1,19 @@
+name: Publish
+on: [push]
+jobs:
+  build:
+    name: "Publish"
+    # if: ${{ contains(github.event.commits[0].message, '@publish') }}
+    runs-on: ubuntu-latest
+    steps:
+      #- uses: actions/checkout@v4
+      #- name: Use Node.js 22.x
+      #  uses: actions/setup-node@v4
+      #  with:
+      #    node-version: 22.x
+      #    cache: "npm"
+      #- name: Install packages
+      #  run: npm ci
+      #- name: Window build
+      #  run: node build.js v22.11.0 win x64 1.0.0
+      - run: "echo '${{github.event.commits[0].message}}'"
