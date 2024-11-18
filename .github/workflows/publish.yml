@@ -18,7 +18,7 @@ jobs:
           node-version: 22.x
           cache: "npm"
       - name: Install packages
-        run: npm ci
+        run: npm i
       # Windows platforms
       # "x64" | "x86" | "arm64"
       - name: Window x64 build
