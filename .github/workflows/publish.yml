@@ -49,5 +49,5 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "build/*"
-          tag: ${{github.env.PUBLISH_VERSION}}
-          name: "Release ${{github.env.PUBLISH_VERSION}}"
+          tag: ${{env.PUBLISH_VERSION}}
+          name: "Release ${{env.PUBLISH_VERSION}}"
