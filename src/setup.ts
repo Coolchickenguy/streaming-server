@@ -30,6 +30,7 @@ if (oldConfig !== "") {
     );
   }
   writeFileSync("./loc.txt", dir);
+  readlineInterface.close();
 } else {
   // Use nextTick to avoid
   const log = (value: string) => readlineInterface.write(value + "\n");
