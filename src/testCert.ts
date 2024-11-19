@@ -2,8 +2,10 @@ import "./beQuietPunycode.js";
 // @ts-ignore
 import tester from "acme-challenge-test";
 import { create, giveServer } from "./http01auth.cjs";
-import { setup, getCerts } from "./certTools.js";
+import { setup, getCerts, init } from "./certTools.js";
 import listen from "./https.js";
+import config from "./configInit.js";
+init(config);
 const record = ["http://miss.pelling.com", "https://bock.org"];
 await setup();
 const server = await listen(

@@ -1,7 +1,7 @@
 import "./beQuietPunycode.js";
 import readline from "readline/promises";
 import chalk from "chalk";
-import { addSite, removeSite, getCerts, setup } from "./certTools.js";
+import { addSite, removeSite, getCerts, setup,init as initCert } from "./certTools.js";
 import * as configTools from "./config.js";
 import { giveServer } from "./http01auth.cjs";
 import listen from "./https.js";
@@ -9,7 +9,6 @@ import { init } from "./server/middleware/api/common/dbv1.js";
 // @ts-expect-error
 import U from "@root/greenlock/utils.js";
 import { existsSync, statSync, writeFileSync } from "fs";
-import { resolve } from "path";
 const { _validMx } = U;
 /*const config = configTools.getConfig();
 const oldConfig = { ...configTools.getConfig() };
@@ -116,6 +115,7 @@ if (oldConfig !== "") {
   readlineInterface.close();
   if (config.doCert) {
     console.log("Seting up domain");
+    initCert(config);
     await setup();
     const server = await listen(
       (req, res) => {

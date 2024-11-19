@@ -3,7 +3,10 @@ import { fileURLToPath } from "url";
 import { resolve } from "path";
 // @ts-expect-error
 import greenlock from "@root/greenlock";
-import config from "./configInit.js"
+let config: { [key in string | number]: any };
+export function init(configInst:typeof config){
+  config = configInst;
+}
 const packageJsonPath = resolve(
   fileURLToPath(import.meta.url),
   "../../package.json"
@@ -14,7 +17,7 @@ export async function setup() {
   const { name, version }: { name: string; version: number } = JSON.parse(
     readFileSync(packageJsonPath).toString()
   );
-  const { maintainerEmail }  = config as { maintainerEmail: string };
+  const { maintainerEmail } = config as { maintainerEmail: string };
   inst = greenlock.create({
     maintainerEmail,
     packageAgent: name + "/" + version,
