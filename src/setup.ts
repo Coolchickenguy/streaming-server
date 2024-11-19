@@ -24,7 +24,7 @@ const oldConfig: string = await readlineInterface.question(
 );
 if (oldConfig !== "") {
   let dir = oldConfig;
-  while (!(existsSync(dir) && statSync(dir).isDirectory() === false)) {
+  while (!(existsSync(dir) && statSync(dir).isDirectory() === true)) {
     dir = await readlineInterface.question(
       "Enter old db dir (Last was invalid)"
     );
