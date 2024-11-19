@@ -239,7 +239,6 @@ process.on("exit", onExit);
 process.on("SIGINT", onExit);
 process.on("SIGUSR1", onExit);
 process.on("SIGUSR2", onExit);
-process.on("uncaughtException", onExit);
 
 type output = { [key in string]: output } | number;
 export function dirSize(path: string): output {

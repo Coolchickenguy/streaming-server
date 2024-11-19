@@ -1,4 +1,4 @@
-import { root, getConfig, dbDir } from "../../../../config.js";
+import { root, init as getConfig, dbDirectory as dbDir } from "../../../../config.js";
 import { ffprobeLocation } from "../../../../ffmpeg.js";
 import { createFfmpegHlsInst } from "../../../hls.js";
 import { init } from "../common/dbv1.js";
@@ -8,7 +8,7 @@ import { spawn } from "child_process";
 import { resolve } from "path";
 import { teeStream, closestNumber, events } from "../../../utils.js";
 type db = ReturnType<typeof init>;
-const { resolutionsAndBitrates: ___resolutionsAndBitrates } = getConfig();
+const { config: {resolutionsAndBitrates: ___resolutionsAndBitrates} } = getConfig();
 const resolutionsAndBitrates: [number, string, string][] = Array.isArray(
   ___resolutionsAndBitrates
 )

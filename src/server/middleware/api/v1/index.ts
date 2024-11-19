@@ -13,8 +13,8 @@ import { rateLimit } from "express-rate-limit";
 import { urlencoded, json } from "express";
 import accountMedia from "./accountMedia.js";
 import admin from "./admin.js";
-import { getConfig } from "../../../../config.js";
-const config = getConfig();
+import { init as getConfig } from "../../../../config.js";
+const { config } = getConfig();
 const db = init();
 events.once("exit", () => db.destroy());
 export type postFunction = express.Express["post"] extends (

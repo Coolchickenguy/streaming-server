@@ -1,14 +1,13 @@
+import config from "./configInit.js";
 import "./beQuietPunycode.js";
 import express from "express";
 import listen from "./https.js";
 import { getCerts, setup } from "./certTools.js";
-import { getConfig } from "./config.js";
 import { giveServer } from "./http01auth.cjs";
 import configure from "./server/index.js";
 import { wsRouter } from "./server/wsRouter.js";
 import { createServer } from "http";
 import http from "http";
-const config = getConfig();
 if (config.doCert) {
   await setup();
 }

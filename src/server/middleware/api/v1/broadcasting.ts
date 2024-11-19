@@ -3,13 +3,13 @@ import { static as static_ } from "express";
 import type { init } from "../common/dbv1.js";
 import { wsRouter, callbackFunction } from "../../../wsRouter.js";
 import { check, error400, noopClass, ok200, wrapForNoop } from "./index.js";
-import { dbDir, getConfig, root } from "../../../../config.js";
+import { dbDirectory as dbDir, init as getConfig, root } from "../../../../config.js";
 import { Readable } from "stream";
 import { initHls } from "./initHls.js";
 import { randomUUID } from "crypto";
 import { resolve } from "path";
 import { rmSync } from "fs";
-const config = getConfig();
+const {config} = getConfig();
 if (!("subject" in config)) {
   throw new Error("Not configured for website");
 }

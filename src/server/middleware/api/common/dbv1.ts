@@ -1,5 +1,5 @@
 import * as lockfile from "proper-lockfile";
-import { dbDir } from "../../../../config.js";
+import { dbDirectory as dbDir } from "../../../../config.js";
 import { resolve } from "path";
 import bcrypt from "bcryptjs";
 const { hashSync, compareSync } = bcrypt;

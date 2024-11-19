@@ -138,4 +138,4 @@ config.json
 greenlock.d/
 .greenlockrc
 # Database files
-assets/private/userMedia/*
+loc.txt

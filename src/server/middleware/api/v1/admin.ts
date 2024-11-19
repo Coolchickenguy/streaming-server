@@ -2,12 +2,12 @@ import type * as express from "express";
 import { wsRouter } from "../../../wsRouter.js";
 import { wrapForNoop, check, error400, ok200 } from "./index.js";
 import { init } from "../common/dbv1.js";
-import { dbDir, getConfig, root } from "../../../../config.js";
+import { dbDirectory as dbDir, init as getConfig, root } from "../../../../config.js";
 import { resolve } from "path";
 import { rmSync, readdirSync, statSync } from "fs";
 import { dirSize } from "../../../utils.js";
 type db = ReturnType<typeof init>;
-const config = getConfig();
+const {config} = getConfig();
 export default function admin(
   apiRouter: express.Router,
   ws: wsRouter,
