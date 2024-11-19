@@ -18,4 +18,6 @@ export function setConfig(newConfig: { [key in string]?: any }): void {
   writeFileSync(configPath, JSON.stringify(config));
 }
 export const dbDir =
-  resolve(getConfig().dbDir) ?? resolve(root, "assets", "private", "userMedia");
+  typeof config.dbDir === "string" && config.dbDir.length > 0
+    ? resolve(config.dbDir)
+    : resolve(root, "assets", "private", "userMedia");
