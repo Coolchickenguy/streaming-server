@@ -1,4 +1,4 @@
-import { root, getConfig } from "../../../../config.js";
+import { root, getConfig, dbDir } from "../../../../config.js";
 import { ffprobeLocation } from "../../../../ffmpeg.js";
 import { createFfmpegHlsInst } from "../../../hls.js";
 import { init } from "../common/dbv1.js";
@@ -121,10 +121,7 @@ export async function initHls(
   database.setMedia(username, "public", oldStreams, ["streams"]);
   const streamIndex = oldStreams.length;
   const streamDir = resolve(
-    root,
-    "assets",
-    "private",
-    "userMedia",
+    dbDir,
     "streams",
     username,
     streamIndex.toString()

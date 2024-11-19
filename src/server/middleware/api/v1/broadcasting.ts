@@ -3,7 +3,7 @@ import { static as static_ } from "express";
 import type { init } from "../common/dbv1.js";
 import { wsRouter, callbackFunction } from "../../../wsRouter.js";
 import { check, error400, noopClass, ok200, wrapForNoop } from "./index.js";
-import { getConfig, root } from "../../../../config.js";
+import { dbDir, getConfig, root } from "../../../../config.js";
 import { Readable } from "stream";
 import { initHls } from "./initHls.js";
 import { randomUUID } from "crypto";
@@ -88,10 +88,7 @@ export function addBrodcasting(
         } else {
           rmSync(
             resolve(
-              root,
-              "assets",
-              "private",
-              "userMedia",
+              dbDir,
               "streams",
               username,
               body.id.toString()
@@ -126,7 +123,7 @@ export function addBrodcasting(
   });
   Router.use(
     "/stream",
-    static_(resolve(root, "assets", "private", "userMedia", "streams"), {
+    static_(resolve(dbDir, "streams"), {
       setHeaders: (res) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
       },

@@ -17,3 +17,5 @@ export function setConfig(newConfig: { [key in string]?: any }): void {
   config = newConfig;
   writeFileSync(configPath, JSON.stringify(config));
 }
+export const dbDir =
+  resolve(getConfig().dbDir) ?? resolve(root, "assets", "private", "userMedia");

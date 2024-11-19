@@ -1,12 +1,11 @@
 import * as lockfile from "proper-lockfile";
-import { root } from "../../../../config.js";
+import { dbDir } from "../../../../config.js";
 import { resolve } from "path";
 import bcrypt from "bcryptjs";
 const { hashSync, compareSync } = bcrypt;
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { randomBytes, hash } from "crypto";
 let held = false;
-const dbDir = resolve(root, "assets/private/userMedia");
 export function init() {
   if (!existsSync(dbDir)) {
     mkdirSync(dbDir, { recursive: true });

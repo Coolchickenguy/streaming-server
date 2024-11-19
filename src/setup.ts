@@ -70,6 +70,15 @@ await safeAsk(
         })()
       : undefined
 );
+await safeAsk(`${chalk.red("Enter db dir")}`, "dbDir", (value) =>
+  // THAT IS NOT HOW THIS FUNCTION WORKS
+  // @ts-ignore
+  value === ""
+    ? (() => {
+        throw new Error("Enter a value");
+      })()
+    : undefined
+);
 await safeAsk(
   `${chalk.red("Enter maintainer email")}${chalk.green.dim(
     " (Used by cert library)"
