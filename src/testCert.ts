@@ -1,3 +1,4 @@
+import "./beQuietPunycode.js";
 // @ts-ignore
 import tester from "acme-challenge-test";
 import { create, giveServer } from "./http01auth.cjs";
