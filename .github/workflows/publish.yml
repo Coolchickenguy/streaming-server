@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Get version
-        run: echo "PUBLISH_VERSION=$(echo '${{ github.event.commits[0].message }}' | grep -oP "(?<=@publish )\d+\.\d+\.\d")" >> $GITHUB_ENV
+        run: echo "PUBLISH_VERSION=$(echo '${{ github.event.commits[0].message }}' | grep -oP "(?<=@publish )((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)")" >> $GITHUB_ENV
       - name: Echo version
         run: echo $PUBLISH_VERSION
       - name: Use Node.js 22.x
