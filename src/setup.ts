@@ -71,8 +71,6 @@ await safeAsk(
       : undefined
 );
 await safeAsk(`${chalk.red("Enter db dir")}`, "dbDir", (value) =>
-  // THAT IS NOT HOW THIS FUNCTION WORKS
-  // @ts-ignore
   value === ""
     ? (() => {
         throw new Error("Enter a value");
@@ -120,6 +118,7 @@ if (config.doCert) {
   }
   await addSite(config.subject);
 }
+configTools.refreshConfig();
 const db = init();
 db.addUser("admin", "admin");
 db.setMedia("admin", "public", true, ["premissions", "abilities", "admin"]);

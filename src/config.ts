@@ -17,7 +17,12 @@ export function setConfig(newConfig: { [key in string]?: any }): void {
   config = newConfig;
   writeFileSync(configPath, JSON.stringify(config));
 }
-export const dbDir =
-  typeof config.dbDir === "string" && config.dbDir.length > 0
-    ? resolve(config.dbDir)
-    : resolve(root, "assets", "private", "userMedia");
+export let dbDir: string;
+export function refreshConfig() {
+  config = JSON.parse(readFileSync(configPath).toString());
+  dbDir =
+    typeof config.dbDir === "string" && config.dbDir.length > 0
+      ? resolve(config.dbDir)
+      : resolve(root, "assets", "private", "userMedia");
+}
+refreshConfig();
