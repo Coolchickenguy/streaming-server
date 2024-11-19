@@ -13,9 +13,9 @@
     "typescript": "^5.5.4",
     "ws": "^8.18.0"
   },
-  "name": "ws-express-auto-https-cert-nodejs-template",
+  "name": "streaming-server",
   "version": "1.0.0",
-  "description": "A websocket and express router template with automatic cert genaration and renewal.",
+  "description": "Host a streaming server!",
   "main": "dist/index.js",
   "scripts": {
     "test": "node dist/testCert.js",
@@ -25,14 +25,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Coolchickenguy/ws-express-auto-https-cert-nodejs-template.git"
+    "url": "git+https://github.com/Coolchickenguy/streaming-server.git"
   },
   "author": "Coolchickenguy",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Coolchickenguy/ws-express-auto-https-cert-nodejs-template/issues"
+    "url": "https://github.com/Coolchickenguy/streaming-server/issues"
   },
-  "homepage": "https://github.com/Coolchickenguy/ws-express-auto-https-cert-nodejs-template#readme",
+  "homepage": "https://github.com/Coolchickenguy/streaming-server#readme",
   "type": "module",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
