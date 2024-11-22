@@ -61,7 +61,7 @@ cd release
 ../nodejs/bin/npm run build
 ../nodejs/bin/npm run setup
 cd ../
-echo "cd ./release\\n ../nodejs/bin/npm run start" > ./start.sh`;
+printf "cd ./release\\n ../nodejs/bin/npm run start" > ./start.sh`;
   console.log(sh);
 } else {
   console.log("Invalid os");
