@@ -21,6 +21,11 @@
     <button class="brodcastButton" id="brodcastButton">
       Brodcast from the browser
     </button>
+    <h1 class="header">Brodcast from ffmpeg</h1>
+    <code>ffmpeg {Input goes here} -f webm "http://192.168.4.95:80/api/rest/v1/brodcast/publishViaStream?username=$username&password=$password&videoFormat=webm"</code>
+    <h2 class="subheadding">Sample</h2>
+    <p class="p">Listens for rtmp (Almost all brodcasting apps support it) and brodcasts (Username user and password 1234)</p>
+    <code>ffmpeg -listen 1 -i rtmp://localhost:1935 -f webm "http://192.168.4.95:80/api/rest/v1/brodcast/publishViaStream?username=user&password=1234&videoFormat=webm"</code>
     <script src="/js/api.js"></script>
     <script src="/js/session.js"></script>
     <script src="/js/header.js"></script>

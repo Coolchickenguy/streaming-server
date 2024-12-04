@@ -23,6 +23,12 @@ export type postFunction = express.Express["post"] extends (
 ) => any
   ? v
   : never;
+export type getFunction = express.Express["get"] extends (
+  arg0: string,
+  arg1: infer v
+) => any
+  ? v
+  : never;
 export function error400(
   reasons: string[],
   req: Parameters<postFunction>[0],

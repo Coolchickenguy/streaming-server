@@ -1,4 +1,8 @@
-import { root, init as getConfig, dbDirectory as dbDir } from "../../../../config.js";
+import {
+  root,
+  init as getConfig,
+  dbDirectory as dbDir,
+} from "../../../../config.js";
 import { ffprobeLocation } from "../../../../ffmpeg.js";
 import { createFfmpegHlsInst } from "../../../hls.js";
 import { init } from "../common/dbv1.js";
@@ -8,7 +12,9 @@ import { spawn } from "child_process";
 import { resolve } from "path";
 import { teeStream, closestNumber, events } from "../../../utils.js";
 type db = ReturnType<typeof init>;
-const { config: {resolutionsAndBitrates: ___resolutionsAndBitrates} } = getConfig();
+const {
+  config: { resolutionsAndBitrates: ___resolutionsAndBitrates },
+} = getConfig();
 const resolutionsAndBitrates: [number, string, string][] = Array.isArray(
   ___resolutionsAndBitrates
 )
@@ -25,34 +31,43 @@ const resolutionsAndBitrates: [number, string, string][] = Array.isArray(
     ];
 export async function initHls(
   database: db,
-  token: string,
+  tokenOrLogin: string | [string, string],
   videoFormat: string,
   inputStream: Readable
 ): Promise<
   | { error: "token"; code: 1 | 2 | 3 | 4 }
+  | { error: "user"; code: 1 | 2 }
   // Code 1: in use
   | { error: "account"; code: 1 }
   | { error: "ffprobe"; data: string }
   | { error: "ffmpeg"; ffmpegError: string; ffmpegStderr: string }
   | void
 > {
-  const tokenHash = database._hashToken(token);
-  const tokenVailidity = database.validateToken(tokenHash);
-  if (tokenVailidity !== 0) {
-    return { error: "token", code: tokenVailidity };
+  let username: string;
+  if (typeof tokenOrLogin === "string") {
+    const tokenHash = database._hashToken(tokenOrLogin);
+    const tokenVailidity = database.validateToken(tokenHash);
+    if (tokenVailidity !== 0) {
+      return { error: "token", code: tokenVailidity };
+    }
+    username = database._database.tokens[tokenHash].username;
+  } else {
+    const userValidity = database.validateUser(
+      tokenOrLogin[0],
+      tokenOrLogin[1]
+    );
+    if (userValidity !== 0) {
+      return { error: "user", code: userValidity };
+    }
+    username = tokenOrLogin[0];
   }
   if (
     !(
-      database.getMedia(
-        database._database.tokens[tokenHash].username,
-        "public",
-        ["premissions", "abilities"]
-      ) as any
+      database.getMedia(username, "public", ["premissions", "abilities"]) as any
     ).brodcast === true
   ) {
     return { error: "token", code: 4 };
   }
-  const { username } = database._database.tokens[tokenHash];
   const __streams = database.getMedia(username, "public", ["streams"]) ?? [];
   if (__streams[__streams.length]?.active === true) {
     return { error: "account", code: 1 };
@@ -120,12 +135,7 @@ export async function initHls(
   oldStreams.push({ startDate, active: true, deleted: false });
   database.setMedia(username, "public", oldStreams, ["streams"]);
   const streamIndex = oldStreams.length;
-  const streamDir = resolve(
-    dbDir,
-    "streams",
-    username,
-    streamIndex.toString()
-  );
+  const streamDir = resolve(dbDir, "streams", username, streamIndex.toString());
   mkdirSync(streamDir, { recursive: true });
   const newHeight = closestNumber(
     height,

@@ -1,5 +1,7 @@
 .header {
   margin-left: 2vw;
+  font-family: comforta;
+  font-size: 3vw;
 }
 .brodcastButton {
   width: 70vw;
@@ -44,4 +46,23 @@
   background-color: white;
   font-family: comforta;
   font-size: 3vw;
+}
+code {
+  margin-left: 2vw;
+  font-family: comforta;
+  font-size: 1.5vw;
+}
+.p {
+  margin-left: 2vw;
+  font-family: comforta;
+  font-size: 1.5vw;
+  margin-top: 1vh;
+  margin-bottom: 1.5vh;
+}
+.subheadding {
+  margin-left: 2vw;
+  font-family: comforta;
+  font-size: 2vw;
+  margin-top: 2vh;
+  margin-bottom: 1vh;
 }

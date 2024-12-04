@@ -2,14 +2,28 @@ import type * as express from "express";
 import { static as static_ } from "express";
 import type { init } from "../common/dbv1.js";
 import { wsRouter, callbackFunction } from "../../../wsRouter.js";
-import { check, error400, noopClass, ok200, wrapForNoop } from "./index.js";
-import { dbDirectory as dbDir, init as getConfig, root } from "../../../../config.js";
+import {
+  check,
+  error400,
+  getFunction,
+  noopClass,
+  ok200,
+  postFunction,
+  wrapForNoop,
+} from "./index.js";
+import {
+  dbDirectory as dbDir,
+  init as getConfig,
+  root,
+} from "../../../../config.js";
 import { Readable } from "stream";
 import { initHls } from "./initHls.js";
 import { randomUUID } from "crypto";
 import { resolve } from "path";
 import { rmSync } from "fs";
-const {config} = getConfig();
+import type { Socket } from "net";
+import { IncomingMessage } from "http";
+const { config } = getConfig();
 if (!("subject" in config)) {
   throw new Error("Not configured for website");
 }
@@ -23,7 +37,7 @@ Server db structure: (per-user)
         startDate: number,
         viewers: number,
         activeViewers: number
-        // Rest is stored in /assets/private/userMedia/streams/${username}/${index}
+        // Rest is stored in /(DB DIR)/streams/${username}/${index}
     }[]
 }
 */
@@ -69,6 +83,46 @@ export function addBrodcasting(
       }
     } as callbackFunction)
   );
+  // Use "use" because ffmpeg sometimes makes a post request
+  Router.use(
+    "/brodcast/publishViaStream",
+    wrapForNoop(async function publish(req, res) {
+      const body = req?.query;
+      check(
+        { username: "string", password: "string", videoFormat: "string" },
+        body,
+        req,
+        res
+      );
+      const { videoFormat } = body;
+      const videoStream = req as IncomingMessage;
+      const output = await initHls(
+        database,
+        [body.username, body.password],
+        videoFormat,
+        videoStream
+      );
+      if (output?.error === "user") {
+        error400(["Invalid username or password"], req, res, {
+          errorCause: "user",
+          errorReason: -1,
+        });
+        return;
+      } else if (output?.error === "ffprobe") {
+        const traceUuid = randomUUID();
+        console.error(
+          `Ffprobe encountered error (trace ${traceUuid} \n${output.data}`
+        );
+        error400([`Ffprobe encountered error (trace ${traceUuid})`], req, res);
+      } else if (output?.error === "ffmpeg") {
+        const traceUuid = randomUUID();
+        console.error(
+          `Ffmpeg encountered error (trace ${traceUuid}) ${output.ffmpegError} and message \n${output.ffmpegStderr}`
+        );
+        error400([`Ffmpeg encountered error (trace ${traceUuid})`], req, res);
+      }
+    })
+  );
   Router.post(
     "/brodcast/delete",
     wrapForNoop(function (req, res) {
@@ -86,15 +140,9 @@ export function addBrodcasting(
             errorReason: 3,
           });
         } else {
-          rmSync(
-            resolve(
-              dbDir,
-              "streams",
-              username,
-              body.id.toString()
-            ),
-            { recursive: true }
-          );
+          rmSync(resolve(dbDir, "streams", username, body.id.toString()), {
+            recursive: true,
+          });
           brodcast.deleted = true;
           database.setMedia(username, "public", brodcast, ["streams", id]);
           ok200(["Deleted successfully"], req, res);
