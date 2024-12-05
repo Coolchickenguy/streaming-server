@@ -93,9 +93,7 @@ export function createFfmpegHlsInst({
                 )
                 .join("; ")}`,
             ]
-          : [])
-      )
-      .addOutputOptions(
+          : []),
         ...(useVideoTrack >= 0
           ? videoBitRates.map((bitrate, index) => [
               "-map",
