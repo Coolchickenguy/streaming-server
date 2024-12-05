@@ -135,63 +135,72 @@ export async function initHls(
   oldStreams.push({ startDate, active: true, deleted: false });
   database.setMedia(username, "public", oldStreams, ["streams"]);
   const streamIndex = oldStreams.length;
-  const streamDir = resolve(dbDir, "streams", username, streamIndex.toString());
-  mkdirSync(streamDir, { recursive: true });
-  const newHeight = closestNumber(
-    height,
-    resolutionsAndBitrates.map(([resolution]) => resolution)
-  );
-  const newWidth = Math.ceil(newHeight * aspectRatio);
-  const useableResolutionsAndBitrates = resolutionsAndBitrates.filter(
-    ([resolution, videoBitrate, audioBitrate]) => newHeight >= resolution
-  );
-  const config = {
-    customFilter: `scale=iw*min(${newWidth}/iw\\,${newHeight}/ih):ih*min(${newWidth}/iw\\,${newHeight}/ih),pad=${newWidth}:${newHeight}:(${newWidth}-iw)/2:(${newHeight}-ih)/2`,
-    aspectRatio,
-    resolutions: useableResolutionsAndBitrates.map(
-      ([resolution, videoBitrate, audioBitrate]) => resolution
-    ),
-    videoBitRates: useableResolutionsAndBitrates.map(
-      ([resolution, videoBitrate, audioBitrate]) => videoBitrate
-    ),
-    audioBitRates: useableResolutionsAndBitrates.map(
-      ([resolution, videoBitrate, audioBitrate]) => audioBitrate
-    ),
-    basePath: streamDir,
-    useAudioTrack:
-      probeData.streams.filter(
-        (value) => !("width" in value || "height" in value)
-      ).length !== 0
-        ? 0
-        : -1,
-    useVideoTrack: width >= 0 ? 0 : -1,
-    hlsListSize: 0,
-  };
-  const ffmpegInst = createFfmpegHlsInst(config);
-  ffmpegInst.addInput(videoStream);
-  ffmpegInst.inputFormat(videoFormat);
-  return await new Promise(function host(resolve) {
-    function onEnd() {
-      const old = database.getMedia(username, "public", ["streams"]);
-      if (old[streamIndex - 1]) {
-        old[streamIndex - 1].active = false;
-        database.setMedia(username, "public", old, ["streams"]);
-      }
-      resolve();
-      events.removeListener("exit", onEnd);
+  function onEnd() {
+    const old = database.getMedia(username, "public", ["streams"]);
+    if (old[streamIndex - 1]) {
+      old[streamIndex - 1].active = false;
+      database.setMedia(username, "public", old, ["streams"]);
     }
-    ffmpegInst.on("error", function (error, stdout, stderr) {
-      resolve({
-        error: "ffmpeg",
-        ffmpegError: error.message,
-        ffmpegStderr: stderr ?? "",
+    resolve();
+    events.removeListener("exit", onEnd);
+  }
+  // Prepend so it will be run before the db is destroyed
+  events.prependListener("exit", onEnd);
+  try {
+    const streamDir = resolve(
+      dbDir,
+      "streams",
+      username,
+      streamIndex.toString()
+    );
+    mkdirSync(streamDir, { recursive: true });
+    const newHeight = closestNumber(
+      height,
+      resolutionsAndBitrates.map(([resolution]) => resolution)
+    );
+    const newWidth = Math.ceil(newHeight * aspectRatio);
+    const useableResolutionsAndBitrates = resolutionsAndBitrates.filter(
+      ([resolution, videoBitrate, audioBitrate]) => newHeight >= resolution
+    );
+    const config = {
+      customFilter: `scale=iw*min(${newWidth}/iw\\,${newHeight}/ih):ih*min(${newWidth}/iw\\,${newHeight}/ih),pad=${newWidth}:${newHeight}:(${newWidth}-iw)/2:(${newHeight}-ih)/2`,
+      aspectRatio,
+      resolutions: useableResolutionsAndBitrates.map(
+        ([resolution, videoBitrate, audioBitrate]) => resolution
+      ),
+      videoBitRates: useableResolutionsAndBitrates.map(
+        ([resolution, videoBitrate, audioBitrate]) => videoBitrate
+      ),
+      audioBitRates: useableResolutionsAndBitrates.map(
+        ([resolution, videoBitrate, audioBitrate]) => audioBitrate
+      ),
+      basePath: streamDir,
+      useAudioTrack:
+        probeData.streams.filter(
+          (value) => !("width" in value || "height" in value)
+        ).length !== 0
+          ? 0
+          : -1,
+      useVideoTrack: width >= 0 ? 0 : -1,
+      hlsListSize: 0,
+    };
+    const ffmpegInst = createFfmpegHlsInst(config);
+    ffmpegInst.addInput(videoStream);
+    ffmpegInst.inputFormat(videoFormat);
+    return await new Promise(function host(resolve) {
+      ffmpegInst.on("error", function (error, stdout, stderr) {
+        resolve({
+          error: "ffmpeg",
+          ffmpegError: error.message,
+          ffmpegStderr: stderr ?? "",
+        });
+        onEnd();
       });
-      onEnd();
+      videoStream.once("end", onEnd);
+      videoStream.once("close", onEnd);
+      ffmpegInst.run();
     });
-    videoStream.once("end", onEnd);
-    videoStream.once("close", onEnd);
-    // Prepend so it will be run before the db is destroyed
-    events.prependListener("exit", onEnd);
-    ffmpegInst.run();
-  });
+  } catch (e) {
+    onEnd();
+  }
 }
