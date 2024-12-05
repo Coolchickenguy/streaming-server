@@ -9,7 +9,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Get version
-        run: echo "PUBLISH_VERSION=$(echo '${{ github.event.commits[0].message }}' | grep -oP "(?<=@publish )((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)")" >> $GITHUB_ENV
+        run: echo "PUBLISH_VERSION=$(echo "$message" | grep -oP "(?<=@publish )((0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)")" >> $GITHUB_ENV
+        env:
+          message: ${{ github.event.commits[0].message }}
       - name: Echo version
         run: echo $PUBLISH_VERSION
       - name: Use Node.js 22.x
@@ -51,3 +53,45 @@ jobs:
           artifacts: "build/*"
           tag: ${{env.PUBLISH_VERSION}}
           name: "Release ${{env.PUBLISH_VERSION}}"
+          body: |
+           ### Release v${{env.PUBLISH_VERSION}}
+           ## Install Darwin arm64
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/darwin_arm64.sh | sh 
+           ```
+           ## Install Darwin x64
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/darwin_x64.sh | sh 
+           ```
+           ## Install Linux arm64
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_arm64.sh | sh 
+           ```
+           ## Install Linux armv7l
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_armv7l.sh | sh 
+           ```
+           ## Install Linux ppc64le
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_ppc64le.sh | sh 
+           ```
+           ## Install Linux s390x
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_s390x.sh | sh 
+           ```
+           ## Install Linux x64
+           ```bash
+           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_x64.sh | sh 
+           ```
+           ## Install Windows arm64
+           ```powershell
+           Invoke-WebRequest -URI ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/windows_arm64.ps1 -OutFile ./dl.ps1; powershell ./dl.ps1; rm ./dl.ps1;
+           ```
+           ## Install Windows x64
+           ```powershell
+           Invoke-WebRequest -URI ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/windows_x64.ps1 -OutFile ./dl.ps1; powershell ./dl.ps1; rm ./dl.ps1;
+           ```
+           ## Install Windows x86
+           ```powershell
+           Invoke-WebRequest -URI ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/windows_x86.ps1 -OutFile ./dl.ps1; powershell ./dl.ps1; rm ./dl.ps1;
+           ```
