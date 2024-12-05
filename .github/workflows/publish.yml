@@ -57,31 +57,31 @@ jobs:
            ### Release v${{env.PUBLISH_VERSION}}
            ## Install Darwin arm64
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/darwin_arm64.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/darwin_arm64.sh)"
            ```
            ## Install Darwin x64
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/darwin_x64.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/darwin_x64.sh)"
            ```
            ## Install Linux arm64
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_arm64.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_arm64.sh)"
            ```
            ## Install Linux armv7l
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_armv7l.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_armv7l.sh)"
            ```
            ## Install Linux ppc64le
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_ppc64le.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_ppc64le.sh)"
            ```
            ## Install Linux s390x
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_s390x.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_s390x.sh)"
            ```
            ## Install Linux x64
            ```bash
-           curl ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_x64.sh | sh 
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_x64.sh)"
            ```
            ## Install Windows arm64
            ```powershell
