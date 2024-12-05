@@ -68,3 +68,13 @@ body {
   color: #444444;
   cursor: pointer;
 }
+.logo {
+  margin: 2vw;
+  width:fit-content;
+  width: auto;
+  height: auto;
+  max-height: 21vh;
+  max-width: 96vw;
+  align-self: center;
+  flex-shrink: 1;
+}

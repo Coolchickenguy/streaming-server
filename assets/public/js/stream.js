@@ -6,6 +6,7 @@
     // Show profile info
     const image = document.getElementById("profileImage");
     const usernameP = document.getElementById("username");
+    document.getElementById("title").innerText = `Stream brodcasts from ${username} | chickencast`
     image.src =
       apiV1RestBase +
       `/account/getProfileImage?user=${encodeURIComponent(username)}`;
