@@ -2,12 +2,16 @@ import type * as express from "express";
 import { wsRouter } from "../../../wsRouter.js";
 import { wrapForNoop, check, error400, ok200 } from "./index.js";
 import { init } from "../common/dbv1.js";
-import { dbDirectory as dbDir, init as getConfig, root } from "../../../../config.js";
+import {
+  dbDirectory as dbDir,
+  init as getConfig,
+  root,
+} from "../../../../config.js";
 import { resolve } from "path";
 import { rmSync, readdirSync, statSync } from "fs";
 import { dirSize } from "../../../utils.js";
 type db = ReturnType<typeof init>;
-const {config} = getConfig();
+const { config } = getConfig();
 export default function admin(
   apiRouter: express.Router,
   ws: wsRouter,
@@ -76,6 +80,10 @@ export default function admin(
         ) {
           if (db.validateUser(body.user) === 0) {
             db.deleteUser(body.user);
+            rmSync(resolve(dbDir, "streams", body.user), {
+              force: true,
+              recursive: true,
+            });
             ok200(["Deleted account"], req, res);
           } else {
             error400(["Invalid username"], req, res, {
@@ -235,15 +243,9 @@ export default function admin(
                 errorReason: 3,
               });
             } else {
-              rmSync(
-                resolve(
-                  dbDir,
-                  "streams",
-                  body.user,
-                  body.id.toString()
-                ),
-                { recursive: true }
-              );
+              rmSync(resolve(dbDir, "streams", body.user, body.id.toString()), {
+                recursive: true,
+              });
               brodcast.deleted = true;
               db.setMedia(body.user, "public", brodcast, ["streams", id]);
               ok200(["Deleted successfully"], req, res);
@@ -292,9 +294,7 @@ export default function admin(
           )?.admin === true
         ) {
           ok200(["Size found"], req, res, {
-            storageUse: dirSize(
-              dbDir
-            ),
+            storageUse: dirSize(dbDir),
             maxStorage: isNaN(config.maxVideoStorage)
               ? 0
               : Number(config.maxVideoStorage as string),

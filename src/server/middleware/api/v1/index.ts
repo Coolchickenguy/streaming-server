@@ -13,7 +13,9 @@ import { rateLimit } from "express-rate-limit";
 import { urlencoded, json } from "express";
 import accountMedia from "./accountMedia.js";
 import admin from "./admin.js";
-import { init as getConfig } from "../../../../config.js";
+import { dbDirectory, init as getConfig } from "../../../../config.js";
+import { rmSync } from "fs";
+import { resolve } from "path";
 const { config } = getConfig();
 const db = init();
 events.once("exit", () => db.destroy());
@@ -169,6 +171,10 @@ export default function apiv1(app: express.Express, ws: wsRouter): void {
       check({ username: "string", password: "string" }, body, req, res);
       if (db.validateUser(body.username, body.password) === 0) {
         db.deleteUser(body.username);
+        rmSync(resolve(dbDirectory, "streams", body.username), {
+          force: true,
+          recursive: true,
+        });
         ok200(["Account deleted"], req, res);
       } else {
         error400(["Invalid username or password"], req, res, {
