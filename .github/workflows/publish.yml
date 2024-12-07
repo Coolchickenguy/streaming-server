@@ -47,6 +47,11 @@ jobs:
         run: node build.js v22.11.0 darwin x64 $PUBLISH_VERSION > ./build/darwin_x64.sh
       - name: Darwin (Macos) arm64 build
         run: node build.js v22.11.0 darwin arm64 $PUBLISH_VERSION > ./build/darwin_arm64.sh
+      # No nodejs install platforms
+      - name: Bourne-shell platforms with proper nodejs version pre-installed
+        run: node build.js v22.11.0 noNodeInstall-sh any $PUBLISH_VERSION > ./build/noNodeInstall.sh
+      - name: Powershell platforms with proper nodejs version pre-installed
+        run: node build.js v22.11.0 noNodeInstall-powershell any $PUBLISH_VERSION > ./build/noNodeInstall.ps1
       # Publish
       - uses: ncipollo/release-action@v1
         with:
@@ -83,6 +88,10 @@ jobs:
            ```bash
            eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/linux_x64.sh)"
            ```
+           ## Install (Mostly) any computer with bourne shell (sh) and nodejs installed (Latest lts is a good bet but check what the install scripts download)
+           ```bash
+           eval "$(curl -L ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/noNodeInstall.sh)"
+           ```
            ## Install Windows arm64
            ```powershell
            Invoke-WebRequest -URI ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/windows_arm64.ps1 -OutFile ./dl.ps1; powershell ./dl.ps1; rm ./dl.ps1;
@@ -94,4 +103,8 @@ jobs:
            ## Install Windows x86
            ```powershell
            Invoke-WebRequest -URI ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/windows_x86.ps1 -OutFile ./dl.ps1; powershell ./dl.ps1; rm ./dl.ps1;
+           ```
+           ## Install (Mostly) any computer with powershell and nodejs installed (Latest lts is a good bet but check what the install scripts download)
+           ```powershell
+           Invoke-WebRequest -URI ${{ github.server_url }}/${{ github.repository }}/releases/download/${{env.PUBLISH_VERSION}}/noNodeInstall.ps1 -OutFile ./dl.ps1; powershell ./dl.ps1; rm ./dl.ps1;
            ```

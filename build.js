@@ -63,6 +63,43 @@ cd release
 cd ../
 printf "cd ./release\\n ../nodejs/bin/npm run start" > ./start.sh`;
   console.log(sh);
+} else if (buildPlatform === "noNodeInstall-sh") {
+  const sh = `releaseUrl=https://github.com/Coolchickenguy/streaming-server/archive/refs/tags/${codeVersion}.tar.gz
+read -p "Enter install dir" dir
+mkdir -p $dir
+cd $dir
+mkdir temp
+curl -L -o ./temp/release.tar.gz $releaseUrl
+mkdir release
+tar -xzf ./temp/release.tar.gz -C release
+mv ./release/*/* ./release
+rm ./temp/release.tar.gz
+rm -r ./temp
+cd release
+npm i
+npm run build
+npm run setup
+cd ../
+printf "cd ./release\\n npm run start" > ./start.sh`;
+  console.log(sh);
+} else if (buildPlatform === "noNodeInstall-powershell") {
+  const pwsh = `$releaseUrl = "https://github.com/Coolchickenguy/streaming-server/archive/refs/tags/${codeVersion}.zip"
+$dir = Read-Host -Prompt "Enter install dir"
+New-Item -Path $dir -ItemType Directory -ErrorAction SilentlyContinue -Force
+Set-Location $dir
+New-Item -Path temp -ItemType Directory
+Invoke-WebRequest $releaseUrl -OutFile ./temp/release.zip
+New-Item -Path release -ItemType Directory
+Expand-Archive ./temp/release.zip -DestinationPath ./release
+Move-Item -Path "./release/*/*" -Destination "./release"
+Remove-Item ./temp/release.zip
+Set-Location ./release
+npm i
+npm run build
+npm run setup
+'${`Set-Location ./release
+npm run start`}' | Out-File -FilePath ../start.ps1`;
+  console.log(pwsh);
 } else {
   console.log("Invalid os");
   process.exitCode = 1;
