@@ -18,9 +18,6 @@ form.onsubmit = async function submit(ev) {
   });
   const responce = await db.changePassword(username, oldPassword, newPassword);
   if (responce.type === 0) {
-    localStorage.token = responce.value.token;
-    localStorage.username = username;
-    localStorage.loggedIn = true;
     window.location.href = "/account.html";
   } else {
     error.innerText = responce.reasons.join(", ");
