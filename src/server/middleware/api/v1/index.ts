@@ -126,6 +126,10 @@ errorCause:data
   3: Referenced data does not exsist
 */
 export default function apiv1(app: express.Express, ws: wsRouter): void {
+  // Clean up tokens every 1.5 minutes
+  setInterval(() => {
+    db.cleanUpTokens();
+  }, 1.5 * 60);
   const apiRouter = Router();
   // Max of 200 kb
   apiRouter.use(json({ limit: 200000 }));
