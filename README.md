@@ -8,4 +8,4 @@ Find the release you want under https://github.com/Coolchickenguy/streaming-serv
 resolutionsAndBitrates: [number, string, string][]
 [Width (like 1080 for HD),The Video Bitrate,The Audio bitrate][]
 preset: The ffmpeg preset 
-"faster" | "fast" | "medium" | "slow" | "veryslow"
+"ultrafast" | "superfast" |"veryfast" |"faster" | "fast" | "medium" | "slow" | "veryslow"

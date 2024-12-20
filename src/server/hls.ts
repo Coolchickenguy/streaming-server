@@ -62,7 +62,7 @@ export function createFfmpegHlsInst({
   audioCodecs: string[];
   useVideoTrack: number;
   useAudioTrack: number;
-  preset: "faster" | "fast" | "medium" | "slow" | "veryslow";
+  preset: "ultrafast" | "superfast" |"veryfast" |"faster" | "fast" | "medium" | "slow" | "veryslow";
   // Step 3
   hlsTime: number;
   segmentType: string;
