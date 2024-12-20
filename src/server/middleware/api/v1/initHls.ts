@@ -13,7 +13,7 @@ import { resolve } from "path";
 import { teeStream, closestNumber, events } from "../../../utils.js";
 type db = ReturnType<typeof init>;
 const {
-  config: { resolutionsAndBitrates: ___resolutionsAndBitrates },
+  config: { resolutionsAndBitrates: ___resolutionsAndBitrates, preset },
 } = getConfig();
 const resolutionsAndBitrates: [number, string, string][] = Array.isArray(
   ___resolutionsAndBitrates
@@ -182,6 +182,7 @@ export async function initHls(
           ? 0
           : -1,
       useVideoTrack: width >= 0 ? 0 : -1,
+      preset,
       hlsListSize: 0,
     };
     const ffmpegInst = createFfmpegHlsInst(config);

@@ -35,6 +35,7 @@ export function createFfmpegHlsInst({
   audioCodecs = ["aac", "aac", "aac"],
   useVideoTrack = 0,
   useAudioTrack = 0,
+  preset = "fast",
   // Step 3
   hlsTime = 5,
   segmentType = "mpegts",
@@ -61,6 +62,7 @@ export function createFfmpegHlsInst({
   audioCodecs: string[];
   useVideoTrack: number;
   useAudioTrack: number;
+  preset: "faster" | "fast" | "medium" | "slow" | "veryslow";
   // Step 3
   hlsTime: number;
   segmentType: string;
@@ -111,7 +113,7 @@ export function createFfmpegHlsInst({
               "-bufsize:v:1",
               bitrate,
               "-preset",
-              "slow",
+              preset,
               "-g",
               "48",
               "-sc_threshold",
