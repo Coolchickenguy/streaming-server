@@ -5,7 +5,7 @@ import type { IncomingMessage } from "http";
 import type { Duplex } from "stream";
 export type callbackFunction = (
   req: IncomingMessage,
-  socket: ws.WebSocket,
+  socket: ws,
   next: () => void
 ) => void | Promise<void>;
 export class wsRouter {

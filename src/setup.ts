@@ -1,7 +1,13 @@
 import "./beQuietPunycode.js";
 import readline from "readline/promises";
 import chalk from "chalk";
-import { addSite, removeSite, getCerts, setup,init as initCert } from "./certTools.js";
+import {
+  addSite,
+  removeSite,
+  getCerts,
+  setup,
+  init as initCert,
+} from "./certTools.js";
 import * as configTools from "./config.js";
 import { giveServer } from "./http01auth.cjs";
 import listen from "./https.js";
@@ -38,10 +44,11 @@ if (oldConfig !== "") {
   async function safeAsk(
     question: string,
     key: string,
-    validator: (value: string) => Promise<void> | void
+    validator: (value: string) => Promise<void> | void,
+    allowBlank: boolean = false
   ): Promise<void> {
     const responce: string = await readlineInterface.question(question);
-    if (responce !== "") {
+    if (responce !== "" || allowBlank) {
       let invalid;
       try {
         invalid = validator(responce);
@@ -68,10 +75,11 @@ if (oldConfig !== "") {
   }
   await safeAsk(
     `${chalk.red(
-      "Insecure port port (Leave blank to not disable all security and yada yada)"
+      "Insecure port (Leave blank to not disable all security and yada yada)"
     )}`,
     "insecurePort",
-    () => {}
+    () => {},
+    true
   );
   await safeAsk(
     `${chalk.red("Enter video storage size limit")}`,

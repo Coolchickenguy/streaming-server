@@ -4,7 +4,7 @@ import { resolve } from "path";
 // @ts-expect-error
 import greenlock from "@root/greenlock";
 let config: { [key in string | number]: any };
-export function init(configInst:typeof config){
+export function init(configInst: typeof config) {
   config = configInst;
 }
 const packageJsonPath = resolve(
@@ -57,7 +57,7 @@ export function removeSite(subject: string): Promise<void> {
 export function getCerts(subject: string): { key: Buffer; cert: Buffer } {
   const greenlockrcFile = resolve(root, ".greenlockrc");
   let certDir: string;
-  if (existsSync(greenlockrcFile)) {
+  if (!existsSync(greenlockrcFile)) {
     certDir = resolve(root, "assets/defaultCerts");
   } else {
     const { configDir } = JSON.parse(readFileSync(greenlockrcFile).toString());
